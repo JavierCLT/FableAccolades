@@ -1,0 +1,26 @@
+{
+  "_comment": "Aggregate public ratings (Trustpilot + app stores) for context and for the mobile_app fact component. Curated from public listing pages; approximate values with as_of dates. Note the systematic pattern: app stores (prompted reviews) skew high, Trustpilot (self-selected complaints) skews very low for ALL large brokers — documented in limitations.",
+  "defaults": {"retrieval_date": "2026-07-09", "collection_method": "manual_curation", "confidence": "medium", "as_of": "2026-05-01", "scale_max": 5.0},
+  "ratings": [
+    {"broker": "fidelity", "source": "trustpilot", "rating": 1.6, "review_count": 3500, "url": "https://www.trustpilot.com/review/www.fidelity.com", "title": "Fidelity on Trustpilot"},
+    {"broker": "schwab", "source": "trustpilot", "rating": 1.4, "review_count": 2000, "url": "https://www.trustpilot.com/review/www.schwab.com", "title": "Charles Schwab on Trustpilot"},
+    {"broker": "vanguard", "source": "trustpilot", "rating": 1.4, "review_count": 1500, "url": "https://www.trustpilot.com/review/vanguard.com", "title": "Vanguard on Trustpilot"},
+    {"broker": "robinhood", "source": "trustpilot", "rating": 1.2, "review_count": 4500, "url": "https://www.trustpilot.com/review/robinhood.com", "title": "Robinhood on Trustpilot"},
+    {"broker": "ibkr", "source": "trustpilot", "rating": 2.4, "review_count": 3000, "url": "https://www.trustpilot.com/review/interactivebrokers.com", "title": "Interactive Brokers on Trustpilot"},
+    {"broker": "etrade", "source": "trustpilot", "rating": 1.2, "review_count": 1000, "url": "https://www.trustpilot.com/review/us.etrade.com", "title": "E*TRADE on Trustpilot"},
+
+    {"broker": "fidelity", "source": "apple_app_store", "rating": 4.8, "review_count": 2400000, "url": "https://apps.apple.com/us/app/fidelity-investments/id348177453", "title": "Fidelity Investments on the App Store"},
+    {"broker": "schwab", "source": "apple_app_store", "rating": 4.8, "review_count": 900000, "url": "https://apps.apple.com/us/app/charles-schwab/id407358186", "title": "Charles Schwab on the App Store"},
+    {"broker": "vanguard", "source": "apple_app_store", "rating": 4.7, "review_count": 200000, "url": "https://apps.apple.com/us/app/vanguard/id335186209", "title": "Vanguard on the App Store"},
+    {"broker": "robinhood", "source": "apple_app_store", "rating": 4.2, "review_count": 4000000, "url": "https://apps.apple.com/us/app/robinhood-investing-for-all/id938003185", "title": "Robinhood on the App Store"},
+    {"broker": "ibkr", "source": "apple_app_store", "rating": 4.5, "review_count": 50000, "url": "https://apps.apple.com/us/app/ibkr-mobile-invest-worldwide/id274901106", "title": "IBKR Mobile on the App Store"},
+    {"broker": "etrade", "source": "apple_app_store", "rating": 4.6, "review_count": 400000, "url": "https://apps.apple.com/us/app/e-trade-invest-trade/id313259740", "title": "E*TRADE on the App Store"},
+
+    {"broker": "fidelity", "source": "google_play", "rating": 4.4, "review_count": 150000, "url": "https://play.google.com/store/apps/details?id=com.fidelity.android", "title": "Fidelity Investments on Google Play"},
+    {"broker": "schwab", "source": "google_play", "rating": 4.2, "review_count": 100000, "url": "https://play.google.com/store/apps/details?id=com.schwab.mobile", "title": "Charles Schwab on Google Play"},
+    {"broker": "vanguard", "source": "google_play", "rating": 2.3, "review_count": 20000, "url": "https://play.google.com/store/apps/details?id=com.vanguard.android", "title": "Vanguard on Google Play", "notes": "Notable outlier vs iOS and vs expert mobile claims — surfaced in the contradiction views."},
+    {"broker": "robinhood", "source": "google_play", "rating": 4.1, "review_count": 500000, "url": "https://play.google.com/store/apps/details?id=com.robinhood.android", "title": "Robinhood on Google Play"},
+    {"broker": "ibkr", "source": "google_play", "rating": 4.4, "review_count": 40000, "url": "https://play.google.com/store/apps/details?id=atws.app", "title": "IBKR Mobile on Google Play"},
+    {"broker": "etrade", "source": "google_play", "rating": 4.4, "review_count": 60000, "url": "https://play.google.com/store/apps/details?id=com.etrade.mobilepro.activity", "title": "E*TRADE on Google Play"}
+  ]
+}
