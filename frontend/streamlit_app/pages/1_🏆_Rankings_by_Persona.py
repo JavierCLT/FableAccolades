@@ -15,9 +15,10 @@ page_setup("Rankings by Persona", icon="🏆")
 personas = data.personas()
 dims = data.dimensions()
 
-left, right = st.columns([2, 1])
-with left:
-    persona_name = st.selectbox("Investor persona", personas["name"].tolist())
+persona_name = st.pills("Investor persona", personas["name"].tolist(),
+                        default=personas["name"].iloc[0], selection_mode="single")
+if not persona_name:
+    persona_name = personas["name"].iloc[0]
 persona = personas[personas["name"] == persona_name].iloc[0]
 st.caption(persona["description"])
 

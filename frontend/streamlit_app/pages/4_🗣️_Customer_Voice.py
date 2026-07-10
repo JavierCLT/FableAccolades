@@ -20,7 +20,10 @@ st.markdown(
 )
 
 brokers = data.brokers()
-broker_name = st.selectbox("Broker", brokers["name"].tolist())
+broker_name = st.pills("Broker", brokers["name"].tolist(),
+                       default=brokers["name"].iloc[0], selection_mode="single")
+if not broker_name:
+    broker_name = brokers["name"].iloc[0]
 broker = brokers[brokers["name"] == broker_name].iloc[0]
 bid = int(broker["id"])
 

@@ -72,6 +72,66 @@
       "sipc_member": 1,
       "finra_crd": "29106",
       "regulatory_notes": "Operated by Morgan Stanley since 2020 acquisition; FINRA and SIPC member. Standalone E*TRADE client-asset figures are no longer disclosed separately by Morgan Stanley (marked unavailable rather than estimated)."
+    },
+    {
+      "slug": "merrill",
+      "name": "Merrill Edge",
+      "legal_name": "Merrill Lynch, Pierce, Fenner & Smith Inc. (Bank of America)",
+      "website": "https://www.merrilledge.com",
+      "founded_year": 2010,
+      "aum_usd_billions": 360,
+      "aum_as_of": "2024-12-31",
+      "sipc_member": 1,
+      "finra_crd": "7691",
+      "regulatory_notes": "Self-directed platform of Bank of America's Merrill unit; FINRA and SIPC member. AUM figure is approximate Merrill Edge self-directed client balances (company-reported, approximate)."
+    },
+    {
+      "slug": "sofi",
+      "name": "SoFi Invest",
+      "legal_name": "SoFi Securities LLC",
+      "website": "https://www.sofi.com/invest/",
+      "founded_year": 2019,
+      "aum_usd_billions": null,
+      "aum_as_of": null,
+      "sipc_member": 1,
+      "finra_crd": null,
+      "regulatory_notes": "Brokerage arm of SoFi Technologies (invest product launched 2019; SoFi founded 2011); FINRA and SIPC member. SoFi does not disclose Invest client assets separately (marked unavailable rather than estimated). CRD available via FINRA BrokerCheck."
+    },
+    {
+      "slug": "webull",
+      "name": "Webull",
+      "legal_name": "Webull Financial LLC",
+      "website": "https://www.webull.com",
+      "founded_year": 2017,
+      "aum_usd_billions": null,
+      "aum_as_of": null,
+      "sipc_member": 1,
+      "finra_crd": null,
+      "regulatory_notes": "FINRA and SIPC member. Client-asset totals not reliably disclosed (marked unavailable rather than estimated). Parent-company ownership structure has drawn public/congressional scrutiny (public record). CRD available via FINRA BrokerCheck."
+    },
+    {
+      "slug": "ally",
+      "name": "Ally Invest",
+      "legal_name": "Ally Invest Securities LLC",
+      "website": "https://www.ally.com/invest/",
+      "founded_year": 2016,
+      "aum_usd_billions": null,
+      "aum_as_of": null,
+      "sipc_member": 1,
+      "finra_crd": null,
+      "regulatory_notes": "Brokerage arm of Ally Financial (former TradeKing, acquired 2016); FINRA and SIPC member. Ally does not disclose Invest client assets separately (marked unavailable rather than estimated). CRD available via FINRA BrokerCheck."
+    },
+    {
+      "slug": "jpmorgan",
+      "name": "J.P. Morgan Self-Directed",
+      "legal_name": "J.P. Morgan Securities LLC",
+      "website": "https://www.chase.com/personal/investments/self-directed-investing",
+      "founded_year": 2018,
+      "aum_usd_billions": null,
+      "aum_as_of": null,
+      "sipc_member": 1,
+      "finra_crd": "79",
+      "regulatory_notes": "Self-directed platform inside the Chase app/site (launched 2018 as 'You Invest'); FINRA and SIPC member. JPMorgan does not disclose self-directed client assets separately (marked unavailable rather than estimated)."
     }
   ]
 }

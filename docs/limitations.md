@@ -44,6 +44,13 @@ preferential logic.
   and Interactive Brokers have no CFPB entity. **Absence is a coverage gap, not a clean
   record**, and is displayed as such. Complaint volumes also scale with customer counts;
   scoring normalizes by disclosed client assets, an imperfect denominator.
+- **Conglomerate attribution.** Merrill Edge (Bank of America), Ally Invest (Ally
+  Financial), and J.P. Morgan Self-Directed (JPMorgan Chase) sit inside parents whose CFPB
+  complaint streams are dominated by unrelated business lines (auto loans, credit cards,
+  retail banking) — those entities are deliberately excluded rather than unfairly counted.
+  SoFi's and Webull's entities are shown with an explicit attribution caveat and never move
+  scores. Similarly, some aggregate app/review ratings for bank-owned brokers cover the
+  whole banking app, not just investing — flagged in the evidence notes.
 - **Reddit/forum themes are directional, not statistical.** Volumes are approximate mention
   counts from curated or API-collected threads, not a survey. Communities differ in
   composition (e.g. Bogleheads skews toward long-term index investors).

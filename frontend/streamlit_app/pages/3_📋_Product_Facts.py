@@ -52,7 +52,8 @@ FACT_LABELS = {
     "tax_lot_control": "Tax-lot control",
 }
 
-dim_filter = st.multiselect("Filter by dimension", facts["dim_name"].unique().tolist())
+dim_filter = st.pills("Filter by dimension (optional)", facts["dim_name"].unique().tolist(),
+                      selection_mode="multi")
 view = facts[facts["dim_name"].isin(dim_filter)] if dim_filter else facts
 
 view = view.copy()
@@ -63,9 +64,11 @@ table.index.names = ["Dimension", "Fact  (⏳ = volatile, check as-of date)"]
 st.dataframe(table, use_container_width=True, height=640)
 
 st.subheader("Evidence & data age for a specific fact")
-c1, c2 = st.columns(2)
-fact_choice = c1.selectbox("Fact", sorted(view["Fact"].unique()))
-broker_choice = c2.selectbox("Broker", sorted(view["broker_name"].unique()))
+broker_choice = st.pills("Broker", sorted(view["broker_name"].unique()),
+                         default=sorted(view["broker_name"].unique())[0], selection_mode="single")
+if not broker_choice:
+    broker_choice = sorted(view["broker_name"].unique())[0]
+fact_choice = st.selectbox("Fact", sorted(view["Fact"].unique()))
 sel = view[(view["Fact"] == fact_choice) & (view["broker_name"] == broker_choice)]
 if sel.empty:
     st.caption("No data recorded for this combination.")

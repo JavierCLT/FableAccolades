@@ -26,18 +26,11 @@ acc = data.q(
        ORDER BY a.year DESC, s.name, a.award_title"""
 )
 
-f1, f2, f3 = st.columns(3)
-broker_f = f1.multiselect("Broker", sorted(acc["broker_name"].unique()))
-pub_f = f2.multiselect("Publisher", sorted(acc["source_name"].unique()))
-year_f = f3.multiselect("Year", sorted(acc["year"].dropna().unique(), reverse=True))
-
+broker_f = st.pills("Filter by broker (optional)", sorted(acc["broker_name"].unique()),
+                    selection_mode="multi")
 view = acc.copy()
 if broker_f:
     view = view[view["broker_name"].isin(broker_f)]
-if pub_f:
-    view = view[view["source_name"].isin(pub_f)]
-if year_f:
-    view = view[view["year"].isin(year_f)]
 
 st.dataframe(
     view[["broker_name", "award_title", "category", "source_name", "year", "rank"]]

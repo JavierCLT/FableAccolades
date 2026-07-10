@@ -11,8 +11,9 @@ evidence-backed comparison engine that shows:
   the official **CFPB Consumer Complaint Database**),
 - which brokers fit different investor personas — with user-adjustable weights.
 
-**Phase 1 brokers:** Fidelity, Charles Schwab, Vanguard, Robinhood, Interactive Brokers,
-E\*TRADE.
+**Tracked brokers (11):** Fidelity, Charles Schwab, Vanguard, Robinhood, Interactive
+Brokers, E\*TRADE, Merrill Edge, SoFi Invest, Webull, Ally Invest, and J.P. Morgan
+Self-Directed Investing.
 
 > ⚖️ **Not financial advice.** Scores are evidence-based estimates from public data at
 > collection time. See [docs/limitations.md](docs/limitations.md).
@@ -102,6 +103,7 @@ data feeds, partnerships, affiliate links, or paid placements.
 
 ## Roadmap (post-MVP)
 
-Merrill Edge, SoFi Invest, Webull, Ally Invest, J.P. Morgan Self-Directed; per-broker page
-parsers for automated fact refresh; Playwright for 403-walled expert pages; Postgres
-migration (schema is already portable); optional LLM theme extraction for Reddit at scale.
+Per-broker page parsers for automated fact refresh; Playwright for 403-walled expert pages;
+Postgres migration (schema is already portable); optional LLM theme extraction for Reddit at
+scale; fee/yield change alerts and historical score tracking. Product & growth strategy:
+[docs/strategy.md](docs/strategy.md).

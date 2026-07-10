@@ -47,16 +47,13 @@ st.caption("Grey = publishers agree (gap < 15 points) or no overlapping coverage
 
 # ---- Detail table with evidence ----
 st.subheader("All detected contradictions")
-f1, f2, f3 = st.columns(3)
-broker_f = f1.multiselect("Broker", sorted(con["broker_name"].unique()))
-dim_f = f2.multiselect("Dimension", sorted(con["dim_name"].unique()))
-sev_f = f3.multiselect("Severity", ["moderate", "significant", "severe"])
+broker_f = st.pills("Filter by broker (optional)", sorted(con["broker_name"].unique()),
+                    selection_mode="multi")
+sev_f = st.pills("Severity", ["moderate", "significant", "severe"], selection_mode="multi")
 
 view = con.copy()
 if broker_f:
     view = view[view["broker_name"].isin(broker_f)]
-if dim_f:
-    view = view[view["dim_name"].isin(dim_f)]
 if sev_f:
     view = view[view["severity"].isin(sev_f)]
 

@@ -22,7 +22,7 @@ def test_every_active_broker_gets_scores(conn):
            LEFT JOIN dimension_scores ds ON ds.broker_id = b.id
            WHERE b.active = 1 GROUP BY b.slug"""
     ).fetchall()
-    assert len(rows) == 6
+    assert len(rows) == 11
     for r in rows:
         assert r["n"] == 16, f"{r['slug']} has {r['n']} dimension scores, expected 16"
 
@@ -40,7 +40,7 @@ def test_every_score_has_evidence(conn):
 
 def test_persona_scores_cover_all_brokers(conn):
     n = conn.execute("SELECT COUNT(*) c FROM persona_scores").fetchone()["c"]
-    assert n == 9 * 6
+    assert n == 9 * 11
 
 
 def test_contradictions_detected_from_seed_data(conn):

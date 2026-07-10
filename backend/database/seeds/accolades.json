@@ -1,20 +1,197 @@
 {
   "_comment": "Public awards and rankings ('accolades') curated from publisher award pages. rank=1 means the broker won the category. These are recorded as publisher claims with evidence; they do not directly drive scores (expert ratings do).",
-  "defaults": {"retrieval_date": "2026-07-09", "collection_method": "manual_curation", "confidence": "medium"},
+  "defaults": {
+    "retrieval_date": "2026-07-09",
+    "collection_method": "manual_curation",
+    "confidence": "medium"
+  },
   "accolades": [
-    {"broker": "fidelity", "source": "investopedia", "award_title": "Best Online Broker Overall", "category": "Overall", "year": 2025, "rank": 1, "url": "https://www.investopedia.com/best-online-brokers-4587872", "title": "Investopedia Best Online Brokers", "snippet": "Fidelity named best overall online broker in Investopedia's annual review."},
-    {"broker": "fidelity", "source": "investopedia", "award_title": "Best Broker for ETFs", "category": "ETFs", "year": 2025, "rank": 1, "url": "https://www.investopedia.com/best-online-brokers-4587872", "title": "Investopedia Best Online Brokers", "snippet": "Category win for ETF investing."},
-    {"broker": "ibkr", "source": "investopedia", "award_title": "Best Broker for Advanced Traders", "category": "Advanced Trading", "year": 2025, "rank": 1, "url": "https://www.investopedia.com/best-online-brokers-4587872", "title": "Investopedia Best Online Brokers", "snippet": "Category win for advanced/professional traders."},
-    {"broker": "ibkr", "source": "investopedia", "award_title": "Best Broker for International Trading", "category": "International", "year": 2025, "rank": 1, "url": "https://www.investopedia.com/best-online-brokers-4587872", "title": "Investopedia Best Online Brokers", "snippet": "Category win for international market access."},
-    {"broker": "fidelity", "source": "stockbrokers_com", "award_title": "#1 Broker Overall (Annual Awards)", "category": "Overall", "year": 2025, "rank": 1, "url": "https://www.stockbrokers.com/annual-broker-review", "title": "StockBrokers.com Annual Review", "snippet": "Top overall ranking in the annual industry review."},
-    {"broker": "schwab", "source": "stockbrokers_com", "award_title": "Best in Class: Platforms & Tools (thinkorswim)", "category": "Trading Platforms", "year": 2025, "rank": 1, "url": "https://www.stockbrokers.com/annual-broker-review", "title": "StockBrokers.com Annual Review", "snippet": "thinkorswim recognized as a leading trading platform."},
-    {"broker": "ibkr", "source": "barrons", "award_title": "Best Online Broker", "category": "Overall", "year": 2024, "rank": 1, "url": "https://www.barrons.com/topics/best-online-brokers", "title": "Barron's Best Online Brokers", "snippet": "Interactive Brokers ranked #1 in Barron's annual survey (publicly reported result; full article paywalled)."},
-    {"broker": "fidelity", "source": "kiplinger", "award_title": "Best Online Broker (Reader Survey)", "category": "Overall", "year": 2024, "rank": 1, "url": "https://www.kiplinger.com/investing/online-brokers", "title": "Kiplinger Online Broker Rankings", "snippet": "Top ranking in Kiplinger's online broker survey."},
-    {"broker": "fidelity", "source": "nerdwallet", "award_title": "Best Online Broker for Beginners", "category": "Beginners", "year": 2025, "rank": 1, "url": "https://www.nerdwallet.com/best/investing/online-brokers-for-beginners", "title": "NerdWallet Best Brokers for Beginners", "snippet": "Named a top pick for beginner investors."},
-    {"broker": "robinhood", "source": "nerdwallet", "award_title": "Best for Low-Cost Options Trading", "category": "Options", "year": 2025, "rank": 1, "url": "https://www.nerdwallet.com/best/investing/options-trading-brokers-platforms", "title": "NerdWallet Best Options Trading Platforms", "snippet": "Recognized for zero per-contract options fees."},
-    {"broker": "schwab", "source": "bankrate", "award_title": "Best Broker for Beginners", "category": "Beginners", "year": 2025, "rank": 1, "url": "https://www.bankrate.com/investing/best-online-brokers-for-beginners/", "title": "Bankrate Best Brokers for Beginners", "snippet": "Top pick for beginner investors in Bankrate's awards."},
-    {"broker": "robinhood", "source": "motley_fool_ascent", "award_title": "Best for Mobile Investing", "category": "Mobile", "year": 2025, "rank": 1, "url": "https://www.fool.com/money/buying-stocks/best-online-stock-brokers/", "title": "Motley Fool Money Broker Awards", "snippet": "Recognized for mobile-first investing experience."},
-    {"broker": "ibkr", "source": "forbes_advisor", "award_title": "Best Online Broker for Low Costs", "category": "Low Costs", "year": 2025, "rank": 1, "url": "https://www.forbes.com/advisor/investing/best-online-brokers/", "title": "Forbes Advisor Best Online Brokers", "snippet": "Recognized for low margin rates and trading costs."},
-    {"broker": "vanguard", "source": "nerdwallet", "award_title": "Best Broker for Long-Term / Retirement Investing", "category": "Retirement", "year": 2025, "rank": 1, "url": "https://www.nerdwallet.com/best/investing/ira-accounts", "title": "NerdWallet Best IRA Accounts", "snippet": "Recognized for low-cost long-term and retirement investing."}
+    {
+      "broker": "fidelity",
+      "source": "investopedia",
+      "award_title": "Best Online Broker Overall",
+      "category": "Overall",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.investopedia.com/best-online-brokers-4587872",
+      "title": "Investopedia Best Online Brokers",
+      "snippet": "Fidelity named best overall online broker in Investopedia's annual review."
+    },
+    {
+      "broker": "fidelity",
+      "source": "investopedia",
+      "award_title": "Best Broker for ETFs",
+      "category": "ETFs",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.investopedia.com/best-online-brokers-4587872",
+      "title": "Investopedia Best Online Brokers",
+      "snippet": "Category win for ETF investing."
+    },
+    {
+      "broker": "ibkr",
+      "source": "investopedia",
+      "award_title": "Best Broker for Advanced Traders",
+      "category": "Advanced Trading",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.investopedia.com/best-online-brokers-4587872",
+      "title": "Investopedia Best Online Brokers",
+      "snippet": "Category win for advanced/professional traders."
+    },
+    {
+      "broker": "ibkr",
+      "source": "investopedia",
+      "award_title": "Best Broker for International Trading",
+      "category": "International",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.investopedia.com/best-online-brokers-4587872",
+      "title": "Investopedia Best Online Brokers",
+      "snippet": "Category win for international market access."
+    },
+    {
+      "broker": "fidelity",
+      "source": "stockbrokers_com",
+      "award_title": "#1 Broker Overall (Annual Awards)",
+      "category": "Overall",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.stockbrokers.com/annual-broker-review",
+      "title": "StockBrokers.com Annual Review",
+      "snippet": "Top overall ranking in the annual industry review."
+    },
+    {
+      "broker": "schwab",
+      "source": "stockbrokers_com",
+      "award_title": "Best in Class: Platforms & Tools (thinkorswim)",
+      "category": "Trading Platforms",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.stockbrokers.com/annual-broker-review",
+      "title": "StockBrokers.com Annual Review",
+      "snippet": "thinkorswim recognized as a leading trading platform."
+    },
+    {
+      "broker": "ibkr",
+      "source": "barrons",
+      "award_title": "Best Online Broker",
+      "category": "Overall",
+      "year": 2024,
+      "rank": 1,
+      "url": "https://www.barrons.com/topics/best-online-brokers",
+      "title": "Barron's Best Online Brokers",
+      "snippet": "Interactive Brokers ranked #1 in Barron's annual survey (publicly reported result; full article paywalled)."
+    },
+    {
+      "broker": "fidelity",
+      "source": "kiplinger",
+      "award_title": "Best Online Broker (Reader Survey)",
+      "category": "Overall",
+      "year": 2024,
+      "rank": 1,
+      "url": "https://www.kiplinger.com/investing/online-brokers",
+      "title": "Kiplinger Online Broker Rankings",
+      "snippet": "Top ranking in Kiplinger's online broker survey."
+    },
+    {
+      "broker": "fidelity",
+      "source": "nerdwallet",
+      "award_title": "Best Online Broker for Beginners",
+      "category": "Beginners",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.nerdwallet.com/best/investing/online-brokers-for-beginners",
+      "title": "NerdWallet Best Brokers for Beginners",
+      "snippet": "Named a top pick for beginner investors."
+    },
+    {
+      "broker": "robinhood",
+      "source": "nerdwallet",
+      "award_title": "Best for Low-Cost Options Trading",
+      "category": "Options",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.nerdwallet.com/best/investing/options-trading-brokers-platforms",
+      "title": "NerdWallet Best Options Trading Platforms",
+      "snippet": "Recognized for zero per-contract options fees."
+    },
+    {
+      "broker": "schwab",
+      "source": "bankrate",
+      "award_title": "Best Broker for Beginners",
+      "category": "Beginners",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.bankrate.com/investing/best-online-brokers-for-beginners/",
+      "title": "Bankrate Best Brokers for Beginners",
+      "snippet": "Top pick for beginner investors in Bankrate's awards."
+    },
+    {
+      "broker": "robinhood",
+      "source": "motley_fool_ascent",
+      "award_title": "Best for Mobile Investing",
+      "category": "Mobile",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.fool.com/money/buying-stocks/best-online-stock-brokers/",
+      "title": "Motley Fool Money Broker Awards",
+      "snippet": "Recognized for mobile-first investing experience."
+    },
+    {
+      "broker": "ibkr",
+      "source": "forbes_advisor",
+      "award_title": "Best Online Broker for Low Costs",
+      "category": "Low Costs",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.forbes.com/advisor/investing/best-online-brokers/",
+      "title": "Forbes Advisor Best Online Brokers",
+      "snippet": "Recognized for low margin rates and trading costs."
+    },
+    {
+      "broker": "vanguard",
+      "source": "nerdwallet",
+      "award_title": "Best Broker for Long-Term / Retirement Investing",
+      "category": "Retirement",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.nerdwallet.com/best/investing/ira-accounts",
+      "title": "NerdWallet Best IRA Accounts",
+      "snippet": "Recognized for low-cost long-term and retirement investing."
+    },
+    {
+      "broker": "merrill",
+      "source": "stockbrokers_com",
+      "award_title": "Best in Class: Banking Services",
+      "category": "Banking",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.stockbrokers.com/annual-broker-review",
+      "title": "StockBrokers.com Annual Review",
+      "snippet": "Recognized for bank-brokerage integration via Bank of America."
+    },
+    {
+      "broker": "webull",
+      "source": "investopedia",
+      "award_title": "Best Broker for Low-Cost Options Trading",
+      "category": "Options",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.investopedia.com/best-online-brokers-4587872",
+      "title": "Investopedia Best Online Brokers",
+      "snippet": "Recognized for zero-commission equity options."
+    },
+    {
+      "broker": "sofi",
+      "source": "motley_fool_ascent",
+      "award_title": "Best for Beginners",
+      "category": "Beginners",
+      "year": 2025,
+      "rank": 1,
+      "url": "https://www.fool.com/money/buying-stocks/best-online-stock-brokers/",
+      "title": "Motley Fool Money Broker Awards",
+      "snippet": "Recognized for its beginner-friendly all-in-one experience."
+    }
   ]
 }

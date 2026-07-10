@@ -24,16 +24,31 @@ from backend.database import db
 API_URL = "https://www.consumerfinance.gov/data-research/consumer-complaints/search/api/v1/"
 PUBLIC_URL = "https://www.consumerfinance.gov/data-research/consumer-complaints/search/"
 
-# Verified CFPB company strings per broker. Empty list = verified absent (coverage gap).
-COMPANY_MAP: dict[str, list[str]] = {
-    "fidelity": [],
-    "schwab": ["CHARLES SCHWAB CORPORATION, THE"],
-    "vanguard": [],
-    "robinhood": ["ROBINHOOD MARKETS INC."],
-    "ibkr": [],
+# Verified CFPB company strings per broker (checked against the company-suggest endpoint).
+# Empty list = verified absent (coverage gap), or deliberately excluded because the CFPB
+# entity is a diversified parent whose complaints cannot be fairly attributed to the retail
+# brokerage brand (recorded with an explanation, never silently).
+# attribution_caveat=True keeps the data visible but disables the complaint-rate friction
+# score, because the complaint stream spans products beyond investing.
+COMPANY_MAP: dict[str, dict] = {
+    "fidelity": {"companies": []},
+    "schwab": {"companies": ["CHARLES SCHWAB CORPORATION, THE"]},
+    "vanguard": {"companies": []},
+    "robinhood": {"companies": ["ROBINHOOD MARKETS INC."]},
+    "ibkr": {"companies": []},
     # E*TRADE's consumer bank entity. Morgan Stanley entities are deliberately excluded:
     # attributing all Morgan Stanley complaints to E*TRADE would be unfair.
-    "etrade": ["E*TRADE BANK"],
+    "etrade": {"companies": ["E*TRADE BANK"]},
+    # SoFi: single retail brand, but complaints span lending/banking, not just Invest.
+    "sofi": {"companies": ["SOFI TECHNOLOGIES, INC."], "attribution_caveat": True},
+    # Webull's CFPB entity is its payments/crypto affiliate (tiny volume).
+    "webull": {"companies": ["WEBULL PAY HOLDINGS (US) INC"], "attribution_caveat": True},
+    # Diversified parents excluded: complaints are dominated by auto lending (Ally) and
+    # consumer banking (JPMorgan Chase, Bank of America/Merrill) — attributing them to the
+    # brokerage product would be unfair and violate same-methodology neutrality.
+    "merrill": {"companies": [], "exclusion_note": "Bank of America/Merrill complaints cannot be isolated to Merrill Edge self-directed."},
+    "ally": {"companies": [], "exclusion_note": "ALLY FINANCIAL INC. complaints are dominated by auto lending/banking and cannot be isolated to Ally Invest."},
+    "jpmorgan": {"companies": [], "exclusion_note": "JPMORGAN CHASE & CO. complaints are bank-wide and cannot be isolated to Self-Directed Investing."},
 }
 
 TOP_N_CATEGORIES = 8
@@ -67,18 +82,22 @@ class CfpbCollector(BaseCollector):
 
         conn.execute("DELETE FROM cfpb_complaint_stats")
         results = []
-        for broker_slug, companies in COMPANY_MAP.items():
+        for broker_slug, cfg in COMPANY_MAP.items():
+            companies = cfg["companies"]
             broker_id = db.lookup_id(conn, "brokers", broker_slug)
             if not companies:
+                snippet = cfg.get("exclusion_note") or (
+                    "No matching company entity in the CFPB database (verified via the "
+                    "company-suggest endpoint). Coverage gap: this broker has no consumer "
+                    "banking arm subject to CFPB complaint intake, NOT a clean record."
+                )
                 ev_id = db.add_evidence(
                     conn,
                     source_id=source_id,
                     broker_id=broker_id,
                     url=PUBLIC_URL,
                     title="CFPB Consumer Complaint Database — company lookup",
-                    snippet="No matching company entity in the CFPB database (verified via the "
-                    "company-suggest endpoint). Coverage gap: this broker has no consumer "
-                    "banking arm subject to CFPB complaint intake, NOT a clean record.",
+                    snippet=snippet,
                     retrieval_date=today_iso(),
                     collection_method="api",
                     confidence="high",
@@ -102,6 +121,7 @@ class CfpbCollector(BaseCollector):
                 results.append(f"{broker_slug}: not in CFPB (recorded as coverage gap)")
                 continue
 
+            caveat = bool(cfg.get("attribution_caveat"))
             records: list[dict] = []
             for company in companies:
                 records.extend(self._fetch_company(company, period_start))
@@ -111,17 +131,26 @@ class CfpbCollector(BaseCollector):
             timely_yes = sum(1 for r in records if str(r.get("timely", "")).lower() == "yes")
             timely_pct = round(100.0 * timely_yes / len(records), 1) if records else None
 
+            snippet = (
+                f"{len(records)} complaints received {period_start} to {period_end} "
+                f"(official API export); {timely_pct}% received a timely company response."
+            )
+            if caveat:
+                snippet += (
+                    " ATTRIBUTION CAVEAT: this CFPB entity spans business lines beyond the "
+                    "brokerage product (e.g. lending/payments), so complaint volume is shown "
+                    "for context only and is excluded from friction/momentum scoring."
+                )
             ev_id = db.add_evidence(
                 conn,
                 source_id=source_id,
                 broker_id=broker_id,
                 url=f"{PUBLIC_URL}?company={companies[0].replace(' ', '%20')}",
                 title=f"CFPB complaints for {company_label}",
-                snippet=f"{len(records)} complaints received {period_start} to {period_end} "
-                f"(official API export); {timely_pct}% received a timely company response.",
+                snippet=snippet,
                 retrieval_date=today_iso(),
                 collection_method="api",
-                confidence="high",
+                confidence="high" if not caveat else "medium",
                 raw_path=str(raw_path),
             )
 
@@ -140,17 +169,19 @@ class CfpbCollector(BaseCollector):
 
             # Overall window total.
             db.insert(conn, "cfpb_complaint_stats", stat_row(None, None, len(records)))
-            # Momentum windows: trailing 12 months vs the 12 months before that.
-            recent = sum(1 for r in records if str(r.get("date_received", "")) >= one_year_ago)
-            prior = sum(
-                1
-                for r in records
-                if two_years_ago <= str(r.get("date_received", "")) < one_year_ago
-            )
-            db.insert(conn, "cfpb_complaint_stats",
-                      stat_row(None, "__WINDOW_RECENT_12M__", recent, one_year_ago, period_end))
-            db.insert(conn, "cfpb_complaint_stats",
-                      stat_row(None, "__WINDOW_PRIOR_12M__", prior, two_years_ago, one_year_ago))
+            # Momentum windows: trailing 12 months vs the 12 months before that. Skipped for
+            # attribution-caveat entities so unrelated business lines never move scores.
+            if not caveat:
+                recent = sum(1 for r in records if str(r.get("date_received", "")) >= one_year_ago)
+                prior = sum(
+                    1
+                    for r in records
+                    if two_years_ago <= str(r.get("date_received", "")) < one_year_ago
+                )
+                db.insert(conn, "cfpb_complaint_stats",
+                          stat_row(None, "__WINDOW_RECENT_12M__", recent, one_year_ago, period_end))
+                db.insert(conn, "cfpb_complaint_stats",
+                          stat_row(None, "__WINDOW_PRIOR_12M__", prior, two_years_ago, one_year_ago))
             # Category breakdowns.
             for product, count in Counter(r.get("product") or "Unknown" for r in records).most_common(TOP_N_CATEGORIES):
                 db.insert(conn, "cfpb_complaint_stats", stat_row(product, None, count))

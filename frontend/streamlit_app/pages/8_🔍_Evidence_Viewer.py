@@ -26,12 +26,12 @@ ev = data.q(
        ORDER BY e.id DESC"""
 )
 
-c1, c2, c3, c4 = st.columns(4)
-broker_f = c1.multiselect("Broker", sorted(ev["broker_name"].dropna().unique()))
-type_f = c2.multiselect("Source type", sorted(ev["source_type"].unique()))
-method_f = c3.multiselect("Collection method", sorted(ev["collection_method"].unique()))
-conf_f = c4.multiselect("Confidence", ["high", "medium", "low"])
 search = st.text_input("Search title / snippet / URL")
+with st.expander("Refine (broker, source type, method, confidence)"):
+    broker_f = st.pills("Broker", sorted(ev["broker_name"].dropna().unique()), selection_mode="multi")
+    type_f = st.pills("Source type", sorted(ev["source_type"].unique()), selection_mode="multi")
+    method_f = st.pills("Collection method", sorted(ev["collection_method"].unique()), selection_mode="multi")
+    conf_f = st.pills("Confidence", ["high", "medium", "low"], selection_mode="multi")
 
 view = ev.copy()
 if broker_f:

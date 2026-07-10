@@ -7,7 +7,7 @@ All sources are public. Quality weights (0–1) feed confidence scoring and are 
 
 | Source | Access | Notes |
 |---|---|---|
-| CFPB Consumer Complaint Database | **Official public API** (no key), JSON export, trailing 36 months | Company entities verified via the API's company-suggest endpoint: Robinhood (`ROBINHOOD MARKETS INC.`), Schwab (`CHARLES SCHWAB CORPORATION, THE`), E*TRADE (`E*TRADE BANK`). Fidelity, Vanguard, and IBKR have **no CFPB entity** — recorded explicitly as a coverage gap. |
+| CFPB Consumer Complaint Database | **Official public API** (no key), JSON export, trailing 36 months | Company entities verified via the API's company-suggest endpoint: Robinhood (`ROBINHOOD MARKETS INC.`), Schwab (`CHARLES SCHWAB CORPORATION, THE`), E*TRADE (`E*TRADE BANK`), SoFi (`SOFI TECHNOLOGIES, INC.`, attribution caveat: spans lending/banking), Webull (`WEBULL PAY HOLDINGS (US) INC`, attribution caveat: payments affiliate). Fidelity, Vanguard, and IBKR have **no CFPB entity** — recorded explicitly as a coverage gap. Merrill (Bank of America), Ally Invest (Ally Financial), and J.P. Morgan Self-Directed (JPMorgan Chase) are **deliberately excluded**: their parents' complaint streams are dominated by unrelated business lines and cannot be fairly attributed to the brokerage product. Attribution-caveat entities are shown for context but never move friction/momentum scores. |
 
 ## Broker official pages (objective facts)
 

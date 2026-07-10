@@ -44,7 +44,10 @@ with st.expander("Confidence behind each cell"):
     st.caption("Confidence 0–100: evidence volume, source quality, recency, corroboration.")
 
 st.subheader("Zoom into one dimension")
-dim_name = st.selectbox("Dimension", data.dimensions()["name"].tolist())
+_dims = data.dimensions()["name"].tolist()
+dim_name = st.pills("Dimension", _dims, default=_dims[0], selection_mode="single")
+if not dim_name:
+    dim_name = _dims[0]
 zoom = sel[sel["dim_name"] == dim_name].sort_values("score", ascending=False)
 st.plotly_chart(score_bar(zoom, "broker_name", "score", "broker_slug"), use_container_width=True)
 for _, r in zoom.iterrows():
