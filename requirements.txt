@@ -1,5 +1,8 @@
 # Core
-pandas>=2.2
+# pandas 3.x + pyarrow 25 currently segfault inside libarrow when Streamlit serializes
+# dataframes — pin to the battle-tested 2.x/22.x pairing until upstream stabilizes.
+pandas>=2.2,<3
+pyarrow>=17,<23
 requests>=2.32
 jinja2>=3.1.5      # pandas Styler (highlighted comparison tables)
 

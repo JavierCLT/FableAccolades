@@ -118,12 +118,13 @@ class ExpertSitesCollector(BaseCollector):
 
             if status == "missing":
                 removed += 1
+                # Keep the original retrieval_date: it records when the claim was last seen.
                 conn.execute(
-                    "UPDATE evidence SET unavailable = 1, confidence = 'low', retrieval_date = ? "
-                    "WHERE id = ?", (today, row["evidence_id"]),
+                    "UPDATE evidence SET unavailable = 1, confidence = 'low' WHERE id = ?",
+                    (row["evidence_id"],),
                 )
                 self._note(conn, row["evidence_id"],
-                           f"Review URL no longer resolves (checked {today}) — "
+                           f"WITHDRAWN|dead_url|{today}| Review URL no longer resolves — "
                            "claim excluded from scoring, retained for the record.")
                 continue
 
@@ -142,12 +143,13 @@ class ExpertSitesCollector(BaseCollector):
             if not any(v.lower() in html.lower() for v in variants):
                 removed += 1
                 conn.execute(
-                    "UPDATE evidence SET unavailable = 1, confidence = 'low', retrieval_date = ? "
-                    "WHERE id = ?", (today, row["evidence_id"]),
+                    "UPDATE evidence SET unavailable = 1, confidence = 'low' WHERE id = ?",
+                    (row["evidence_id"],),
                 )
                 self._note(conn, row["evidence_id"],
-                           f"Publisher page no longer mentions this broker (checked {today}) — "
-                           "the review appears withdrawn; claim excluded from scoring.")
+                           f"WITHDRAWN|dropped_coverage|{today}| Publisher page no longer "
+                           "mentions this broker — the review appears withdrawn; "
+                           "claim excluded from scoring.")
                 continue
 
             if row["dimension_id"] is None:

@@ -9,6 +9,7 @@ import streamlit as st
 from components import data
 from components.charts import contradiction_heatmap
 from components.evidence import evidence_expander
+from components.hovercard import evidence_items, hover_html
 from components.layout import page_setup, severity_badge
 
 page_setup("Reviewer Contradiction Matrix", icon="⚔️")
@@ -62,10 +63,15 @@ st.caption(f"{len(view)} contradiction(s) shown. Every row expands into full sou
 for _, r in view.iterrows():
     with st.container(border=True):
         c1, c2 = st.columns([5, 2])
+        side_a = hover_html(f"{r['score_a']:.0f}", evidence_items([int(r["evidence_a_id"])]),
+                            head=f"{r['source_a']} — source")
+        side_b = hover_html(f"{r['score_b']:.0f}", evidence_items([int(r["evidence_b_id"])]),
+                            head=f"{r['source_b']} — source")
         c1.markdown(
-            f"**{r['broker_name']} · {r['dim_name']}** — "
-            f"{r['source_a']} says **{r['score_a']:.0f}**, {r['source_b']} says **{r['score_b']:.0f}** "
-            f"(gap **{r['gap']:.0f}** pts)"
+            f"<b>{r['broker_name']} · {r['dim_name']}</b> — "
+            f"{r['source_a']} says <b>{side_a}</b>, {r['source_b']} says <b>{side_b}</b> "
+            f"(gap <b>{r['gap']:.0f}</b> pts)",
+            unsafe_allow_html=True,
         )
         c2.markdown(severity_badge(r["severity"]))
         evidence_expander(

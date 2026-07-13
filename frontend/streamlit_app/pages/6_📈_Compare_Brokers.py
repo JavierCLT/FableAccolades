@@ -9,6 +9,7 @@ import streamlit as st
 from components import data
 from components.charts import radar_chart, score_bar
 from components.evidence import dimension_evidence_ids, evidence_expander
+from components.hovercard import evidence_items, hover_html
 from components.layout import confidence_badge, page_setup
 
 page_setup("Multi-Broker Comparison", icon="📈")
@@ -56,10 +57,14 @@ for _, r in zoom.iterrows():
         (("facts", "fact_component"), ("customers", "customer_component"), ("experts", "expert_component"))
         if pd.notna(r[key])
     )
-    st.markdown(f"**{r['broker_name']}** — {r['score']:.0f}/100 "
-                f"(confidence {confidence_badge(r['confidence'])}) · {comp}")
-    evidence_expander(f"Evidence — {r['broker_name']} / {dim_name}",
-                      dimension_evidence_ids(int(r["broker_id"]), int(r["dimension_id"])))
+    ev_ids = dimension_evidence_ids(int(r["broker_id"]), int(r["dimension_id"]))
+    st.markdown(
+        f"<b>{r['broker_name']}</b> — "
+        + hover_html(f"{r['score']:.0f}/100", evidence_items(ev_ids, limit=5))
+        + f" (confidence {confidence_badge(r['confidence'])}) · {comp}",
+        unsafe_allow_html=True,
+    )
+    evidence_expander(f"Evidence — {r['broker_name']} / {dim_name}", ev_ids)
 
 st.subheader("Objective facts side-by-side")
 facts = data.q(

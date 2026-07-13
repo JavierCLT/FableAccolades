@@ -6,7 +6,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import streamlit as st
 
 from components import data
-from components.evidence import evidence_expander
+from components.hovercard import evidence_items, hover_html
 from components.layout import page_setup
 
 page_setup("Accolade Tracker", icon="🏅")
@@ -43,9 +43,13 @@ st.subheader("Accolades per broker")
 counts = view.groupby("broker_name").size().sort_values(ascending=False)
 st.bar_chart(counts)
 
-st.subheader("Evidence")
+st.subheader("Evidence — hover any award to verify")
 for _, r in view.iterrows():
-    evidence_expander(
-        f"{r['broker_name']} — {r['award_title']} ({r['source_name']}, {r['year']})",
-        [int(r["evidence_id"])],
+    st.markdown(
+        "🏅 " + hover_html(
+            f"{r['broker_name']} — {r['award_title']} ({r['source_name']}, {r['year']})",
+            evidence_items([int(r["evidence_id"])]),
+            head="Award source",
+        ),
+        unsafe_allow_html=True,
     )

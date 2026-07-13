@@ -8,6 +8,7 @@ import streamlit as st
 
 from components import data
 from components.evidence import dimension_evidence_ids, evidence_expander
+from components.hovercard import evidence_items, hover_html
 from components.layout import confidence_badge, page_setup
 
 page_setup("Rankings by Persona", icon="🏆")
@@ -74,7 +75,13 @@ for rank, (_, row) in enumerate(scores.iterrows(), start=1):
                     continue
                 b1, b2 = st.columns([3, 5])
                 with b1:
-                    st.markdown(f"**{r['dim_name']}** — {r['score']:.0f}/100 (weight {w:.2f})")
+                    ev_ids = dimension_evidence_ids(int(r["broker_id"]), int(r["dimension_id"]))
+                    st.markdown(
+                        f"<b>{r['dim_name']}</b> — "
+                        + hover_html(f"{r['score']:.0f}/100", evidence_items(ev_ids, limit=5))
+                        + f" <span style='color:#888'>(weight {w:.2f})</span>",
+                        unsafe_allow_html=True,
+                    )
                     parts = []
                     for label, key in (("facts", "fact_component"), ("customers", "customer_component"),
                                        ("experts", "expert_component")):

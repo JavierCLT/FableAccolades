@@ -23,6 +23,8 @@ def page_setup(title: str, icon: str = "📊", wide: bool = True) -> None:
             "python -m backend.pipeline --no-collect  # offline (seed data only)\n```"
         )
         st.stop()
+    from components.hovercard import CSS  # inject hover-to-verify styles once per page
+    st.markdown(CSS, unsafe_allow_html=True)
     st.title(title)
     st.info(DISCLAIMER, icon="⚖️")
 

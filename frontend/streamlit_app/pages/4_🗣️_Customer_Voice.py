@@ -9,6 +9,7 @@ import streamlit as st
 
 from components import data
 from components.evidence import evidence_expander
+from components.hovercard import evidence_items, hover_html
 from components.layout import page_setup
 
 page_setup("Customer Voice Dashboard", icon="🗣️")
@@ -78,7 +79,11 @@ for tab, kind in zip(kind_tabs, ["complaint", "praise", "opinion"]):
         for _, t in sub.iterrows():
             with st.container(border=True):
                 sev = "▲" * int(t["severity"])
-                st.markdown(f"**{t['theme']}**")
+                st.markdown(
+                    "<b>" + hover_html(t["theme"], evidence_items([int(t["evidence_id"])]),
+                                       head="Where this theme is observable") + "</b>",
+                    unsafe_allow_html=True,
+                )
                 st.caption(
                     f"Source: {t['source_name']} ({t['source_type']}) · Dimension: {t['dim_name']} · "
                     f"Volume ≈{int(t['volume'])} mentions · Severity {sev} ({int(t['severity'])}/5) · "

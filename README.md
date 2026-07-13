@@ -59,7 +59,11 @@ python -m pytest tests/ -q
 | 📈 Compare Brokers | 2–4 broker side-by-side with radar chart, per-dimension zoom, fact table |
 | 🔎 Filters | Hard screens (no ACAT fee, cash yield ≥ X, mobile rating, crypto, IRA match, …) with exclusion reasons |
 | 🔍 Evidence Viewer | The full evidence ledger: URL, publisher, retrieval date, snippet, method, confidence — every claim traces here |
+| 🕳️ Withdrawn Reviews | Tracks expert claims whose source pages went dead or silently dropped the broker — excluded from scoring, preserved for the record |
 | 📖 Methodology / ⚠️ Limitations | Full scoring spec and honest disclosure of biases and gaps |
+
+Everywhere a score or claim appears, **hovering it opens a proof card** with clickable
+source links, retrieval dates, and confidence — credibility by mouseover.
 
 ## How scoring works (short version)
 

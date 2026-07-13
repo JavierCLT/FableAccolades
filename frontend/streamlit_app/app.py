@@ -9,6 +9,8 @@ import pandas as pd
 import streamlit as st
 
 from components import data
+from components.evidence import dimension_evidence_ids
+from components.hovercard import evidence_items, hover_html
 from components.layout import confidence_badge, page_setup
 
 page_setup("Best Broker Index", icon="🧭")
@@ -53,6 +55,10 @@ def why_summary(broker_slug: str) -> tuple[str, str]:
     return " · ".join(strengths), weakness
 
 
+broker_ids = data.brokers().set_index("slug")["id"].to_dict()
+dim_ids = data.dimensions().set_index("slug")["id"].to_dict()
+top_dims = sorted(weights, key=weights.get, reverse=True)[:2]
+
 top3 = scores.head(3)
 medals = ["🥇", "🥈", "🥉"]
 cols = st.columns(3)
@@ -60,9 +66,19 @@ for i, (_, row) in enumerate(top3.iterrows()):
     with cols[i]:
         with st.container(border=True):
             st.markdown(f"## {medals[i]} {row['broker_name']}")
-            st.metric("Score for you", f"{row['score']:.1f} / 100")
+            # Hover the score to see the strongest evidence behind it (clickable links).
+            ev_ids: list[int] = []
+            for dslug in top_dims:
+                ev_ids += dimension_evidence_ids(int(broker_ids[row["broker_slug"]]),
+                                                 int(dim_ids[dslug]))
+            st.markdown(
+                f"<div style='font-size:1.9rem;font-weight:700'>"
+                f"{hover_html(f'{row.score:.1f} / 100', evidence_items(ev_ids, limit=5), head='Proof (top evidence for your priorities)')}"
+                f"</div>",
+                unsafe_allow_html=True,
+            )
             st.caption(f"Confidence {confidence_badge(row['confidence'])} · "
-                       f"{int(row['evidence_count'])} evidence links")
+                       f"{int(row['evidence_count'])} evidence links · hover the score to verify")
             strengths, weakness = why_summary(row["broker_slug"])
             if strengths:
                 st.markdown(f"**Why:** {strengths}")
@@ -101,7 +117,7 @@ st.caption("Scores 0-100 with default persona weights. These are starting points
 # ----------------------------------------------------------------------------------
 # 3. The differentiators
 # ----------------------------------------------------------------------------------
-c1, c2, c3 = st.columns(3)
+c1, c2, c3, c4 = st.columns(4)
 with c1:
     n_con = data.q("SELECT COUNT(*) c FROM contradictions")["c"].iloc[0]
     st.metric("Expert contradictions detected", int(n_con))
@@ -115,6 +131,11 @@ with c3:
                     "WHERE product IS NULL AND issue IS NULL")["c"].iloc[0]
     st.metric("CFPB complaints analyzed (36m)", int(n_cfpb or 0))
     st.page_link("pages/4_🗣️_Customer_Voice.py", label="Hear actual customers", icon="🗣️")
+with c4:
+    n_wd = data.q("""SELECT COUNT(*) c FROM expert_ratings er
+                     JOIN evidence e ON e.id = er.evidence_id WHERE e.unavailable = 1""")["c"].iloc[0]
+    st.metric("Reviews quietly withdrawn", int(n_wd))
+    st.page_link("pages/11_🕳️_Withdrawn_Reviews.py", label="What publishers deleted", icon="🕳️")
 
 # ----------------------------------------------------------------------------------
 # 4. Coverage, freshness, and honesty (tucked away but present)
