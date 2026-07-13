@@ -24,8 +24,12 @@ preferential logic.
   current terms on the linked source page before making decisions.**
 - Some seed data was **manually curated from public pages** (marked as such in the Evidence
   Viewer, with lower confidence grades where warranted). Collectors re-verify what they can
-  (CFPB via official API; expert overall ratings via live page checks); values that could
-  not be re-verified keep their original retrieval dates so their age stays visible.
+  (CFPB via official API; expert ratings via live page checks). Every expert claim carries a
+  verification status: live-verified claims are upgraded; claims the publisher blocks or
+  renders client-side are kept as clearly labeled *unverified* values at reduced weight; and
+  claims whose pages are gone or no longer mention the broker are marked unavailable and
+  **excluded from scoring** — publishers change and silently withdraw reviews, and a dead
+  URL is treated as a dead claim, not as evidence.
 - A separate **confidence score** quantifies evidence volume, quality, recency, and
   corroboration. Treat low-confidence scores as weakly supported.
 

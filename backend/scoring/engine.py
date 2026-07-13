@@ -233,13 +233,15 @@ def compute_all(conn: sqlite3.Connection) -> None:
                         recencies.append(1.0)
 
             # Expert component
+            # Claims whose evidence is marked unavailable (review withdrawn / URL dead) are
+            # excluded from scoring entirely — a score must never rest on a dead source.
             expert_rows = conn.execute(
                 """SELECT er.rating_normalized AS score, er.source_id, er.evidence_id,
                           s.quality_weight, e.retrieval_date, e.confidence
                    FROM expert_ratings er
                    JOIN sources s ON s.id = er.source_id
                    JOIN evidence e ON e.id = er.evidence_id
-                   WHERE er.broker_id = ? AND er.dimension_id = ?""",
+                   WHERE er.broker_id = ? AND er.dimension_id = ? AND e.unavailable = 0""",
                 (b["id"], d["id"]),
             ).fetchall()
             fallback = False
@@ -251,7 +253,7 @@ def compute_all(conn: sqlite3.Connection) -> None:
                        FROM expert_ratings er
                        JOIN sources s ON s.id = er.source_id
                        JOIN evidence e ON e.id = er.evidence_id
-                       WHERE er.broker_id = ? AND er.dimension_id IS NULL""",
+                       WHERE er.broker_id = ? AND er.dimension_id IS NULL AND e.unavailable = 0""",
                     (b["id"],),
                 ).fetchall()
 
@@ -313,7 +315,8 @@ def compute_all(conn: sqlite3.Connection) -> None:
     for b in brokers:
         rows = conn.execute(
             """SELECT er.rating_normalized AS score, er.source_id, er.evidence_id
-               FROM expert_ratings er WHERE er.broker_id = ? AND er.dimension_id IS NULL""",
+               FROM expert_ratings er JOIN evidence e ON e.id = er.evidence_id
+               WHERE er.broker_id = ? AND er.dimension_id IS NULL AND e.unavailable = 0""",
             (b["id"],),
         ).fetchall()
         for c in find_pairwise_contradictions([dict(r) for r in rows]):

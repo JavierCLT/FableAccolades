@@ -61,6 +61,34 @@ def test_all_data_points_link_to_evidence(conn):
         assert orphan == 0, f"{table} has {orphan} rows without evidence"
 
 
+def test_unavailable_evidence_excluded_from_scoring(conn):
+    # Simulate a publisher withdrawing its reviews of one broker: mark all of
+    # StockBrokers.com's Vanguard rating evidence unavailable, recompute, and verify no
+    # score or contradiction rests on the withdrawn claims.
+    conn.execute(
+        """UPDATE evidence SET unavailable = 1 WHERE id IN (
+             SELECT er.evidence_id FROM expert_ratings er
+             JOIN sources s ON s.id = er.source_id
+             JOIN brokers b ON b.id = er.broker_id
+             WHERE s.slug = 'stockbrokers_com' AND b.slug = 'vanguard')"""
+    )
+    conn.commit()
+    engine.compute_all(conn)
+    n = conn.execute(
+        """SELECT COUNT(*) c FROM contradictions c
+           JOIN brokers b ON b.id = c.broker_id
+           JOIN sources s ON s.id IN (c.source_a_id, c.source_b_id)
+           WHERE b.slug = 'vanguard' AND s.slug = 'stockbrokers_com'"""
+    ).fetchone()["c"]
+    assert n == 0, "withdrawn claims must not appear in contradictions"
+    # Scores still exist for every dimension (other evidence remains).
+    n_scores = conn.execute(
+        """SELECT COUNT(*) c FROM dimension_scores ds JOIN brokers b ON b.id = ds.broker_id
+           WHERE b.slug = 'vanguard'"""
+    ).fetchone()["c"]
+    assert n_scores == 16
+
+
 def test_persona_weights_sum_to_one(conn):
     rows = conn.execute(
         "SELECT persona_id, SUM(weight) s FROM persona_weights GROUP BY persona_id"

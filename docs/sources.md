@@ -22,12 +22,22 @@ only checkable product facts are recorded.
 Investopedia, StockBrokers.com, NerdWallet, Bankrate, Forbes Advisor, Kiplinger, Barron's
 (publicly visible results only — most content is paywalled), The Motley Fool Money/Ascent.
 
-The `expert_sites` collector re-fetches cited review pages (robots.txt-respecting,
-rate-limited, honest user-agent) and verifies published overall ratings via JSON-LD/regex
-extraction where pages allow it. Several publishers block automated clients; their ratings
-remain curated values with visible retrieval dates until re-verified. For stubborn
-JS-rendered pages, Playwright can be enabled selectively (`pip install playwright &&
-playwright install chromium`) — kept out of the default path deliberately.
+The `expert_sites` collector re-fetches every cited review page (robots.txt-respecting,
+rate-limited, honest user-agent) and classifies each stored claim:
+
+- **verified** — rating machine-extracted from the live page (JSON-LD/regex); confirmed or
+  corrected, evidence upgraded to high confidence with a fresh retrieval date.
+- **unverified** — page live but the rating is not machine-extractable, or the publisher
+  blocks automated clients; the curated value is retained at **low confidence** with an
+  explicit note, reducing its scoring weight.
+- **no longer published** — the URL is dead or the page no longer mentions the broker
+  (publishers add/drop coverage and change ratings without notice); the evidence is marked
+  unavailable and the claim is **excluded from scoring and contradiction detection**,
+  remaining visible in the Evidence Viewer as a historical record.
+
+A score never rests on a URL that no longer backs it. For stubborn JS-rendered pages,
+Playwright can be enabled selectively (`pip install playwright && playwright install
+chromium`) — kept out of the default path deliberately.
 
 ## Customer voice
 
