@@ -29,6 +29,7 @@
     {"slug": "broker_merrill", "name": "MerrillEdge.com (official)", "publisher": "Merrill (Bank of America)", "source_type": "broker_official", "base_url": "https://www.merrilledge.com", "quality_weight": 0.95, "notes": "Primary source for Merrill Edge's own pricing/features."},
     {"slug": "broker_sofi", "name": "SoFi.com (official)", "publisher": "SoFi", "source_type": "broker_official", "base_url": "https://www.sofi.com", "quality_weight": 0.95, "notes": "Primary source for SoFi Invest's own pricing/features."},
     {"slug": "broker_webull", "name": "Webull.com (official)", "publisher": "Webull", "source_type": "broker_official", "base_url": "https://www.webull.com", "quality_weight": 0.95, "notes": "Primary source for Webull's own pricing/features."},
+    {"slug": "broker_public", "name": "Public.com (official)", "publisher": "Public", "source_type": "broker_official", "base_url": "https://public.com", "quality_weight": 0.95, "notes": "Primary source for Public's own pricing, rates, and product features."},
     {"slug": "broker_ally", "name": "Ally.com (official)", "publisher": "Ally", "source_type": "broker_official", "base_url": "https://www.ally.com", "quality_weight": 0.95, "notes": "Primary source for Ally Invest's own pricing/features."},
     {"slug": "broker_jpmorgan", "name": "Chase.com (official)", "publisher": "JPMorgan Chase", "source_type": "broker_official", "base_url": "https://www.chase.com", "quality_weight": 0.95, "notes": "Primary source for J.P. Morgan Self-Directed's own pricing/features."}
   ]

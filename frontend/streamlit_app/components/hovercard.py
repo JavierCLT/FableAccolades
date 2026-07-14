@@ -46,9 +46,11 @@ div[data-testid="stVerticalBlock"]:has(.bbi-tip:hover){position:relative;z-index
 .bbi-box .bbi-row{display:block}
 .bbi-box .bbi-meta{display:block;color:#a9adbb;font-size:.74rem;margin-bottom:7px}
 .bbi-box .bbi-head{display:block;font-weight:700;margin-bottom:6px;color:#ffd166}
-.bbi-facttable{border-collapse:collapse;width:100%;font-size:.83rem}
-.bbi-facttable th,.bbi-facttable td{border:1px solid #3a3d4a;padding:6px 8px;vertical-align:top;text-align:left}
-.bbi-facttable th{background:#262935;color:#fafafa;position:sticky;top:0}
+.bbi-facttable{border-collapse:collapse;width:100%;min-width:1400px;font-size:.8rem;background:#fff}
+.bbi-facttable th,.bbi-facttable td{border:1px solid #d8e1dc;padding:7px 9px;vertical-align:top;text-align:left;color:#18211e}
+.bbi-facttable th{background:#eef3f0;color:#33423c;position:sticky;top:0;z-index:3}
+.bbi-facttable th:first-child,.bbi-facttable td:first-child{position:sticky;left:0;background:#f8faf9;z-index:2;min-width:180px}
+.bbi-facttable th:first-child{z-index:4}
 .bbi-facttable td .bbi-tip{border-bottom-color:#666}
 /* Right-side table columns open their cards right-aligned so they never overflow the viewport. */
 .bbi-facttable td:nth-child(n+7) .bbi-box{left:auto;right:0}
@@ -79,9 +81,9 @@ if (!doc.__bbiFlip) {
 
 def enable_flip() -> None:
     """Install the viewport-aware flip behavior (call once per page)."""
-    import streamlit.components.v1 as components
+    import streamlit as st
 
-    components.html(FLIP_SCRIPT, height=0)
+    st.html(FLIP_SCRIPT, unsafe_allow_javascript=True)
 
 
 _CONF_ICON = {"high": "🟢", "medium": "🟡", "low": "🔴"}

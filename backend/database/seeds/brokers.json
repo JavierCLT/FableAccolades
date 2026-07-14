@@ -110,6 +110,18 @@
       "regulatory_notes": "FINRA and SIPC member. Client-asset totals not reliably disclosed (marked unavailable rather than estimated). Parent-company ownership structure has drawn public/congressional scrutiny (public record). CRD available via FINRA BrokerCheck."
     },
     {
+      "slug": "public",
+      "name": "Public",
+      "legal_name": "Open to the Public Investing, Inc.",
+      "website": "https://public.com",
+      "founded_year": 2019,
+      "aum_usd_billions": null,
+      "aum_as_of": null,
+      "sipc_member": 1,
+      "finra_crd": null,
+      "regulatory_notes": "SEC-registered broker-dealer and FINRA/SIPC member. Public does not publish a directly comparable standalone client-asset figure, so assets are recorded as unavailable rather than estimated."
+    },
+    {
       "slug": "ally",
       "name": "Ally Invest",
       "legal_name": "Ally Invest Securities LLC",
@@ -119,6 +131,7 @@
       "aum_as_of": null,
       "sipc_member": 1,
       "finra_crd": null,
+      "active": 0,
       "regulatory_notes": "Brokerage arm of Ally Financial (former TradeKing, acquired 2016); FINRA and SIPC member. Ally does not disclose Invest client assets separately (marked unavailable rather than estimated). CRD available via FINRA BrokerCheck."
     },
     {

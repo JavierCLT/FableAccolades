@@ -50,8 +50,8 @@ def load_reference_tables(conn: sqlite3.Connection) -> None:
     log.info("Reference tables loaded (brokers, dimensions, sources, personas)")
 
 
-def load_product_facts(conn: sqlite3.Connection) -> None:
-    seed = _read_seed("product_facts.json")
+def _load_product_fact_seed(conn: sqlite3.Connection, seed_name: str) -> int:
+    seed = _read_seed(seed_name)
     defaults = seed["defaults"]
     n = 0
     for f in seed["facts"]:
@@ -87,7 +87,17 @@ def load_product_facts(conn: sqlite3.Connection) -> None:
         )
         n += 1
     conn.commit()
+    return n
+
+
+def load_product_facts(conn: sqlite3.Connection) -> None:
+    n = _load_product_fact_seed(conn, "product_facts.json")
     log.info("Loaded %d product facts", n)
+
+
+def load_relationship_benefits(conn: sqlite3.Connection) -> None:
+    n = _load_product_fact_seed(conn, "relationship_benefits.json")
+    log.info("Loaded %d relationship benefit facts", n)
 
 
 def load_expert_reviews(conn: sqlite3.Connection) -> None:
@@ -254,6 +264,7 @@ def load_aggregate_ratings(conn: sqlite3.Connection) -> None:
 def load_all(conn: sqlite3.Connection) -> None:
     load_reference_tables(conn)
     load_product_facts(conn)
+    load_relationship_benefits(conn)
     load_expert_reviews(conn)
     load_accolades(conn)
     load_customer_voice(conn)

@@ -20,13 +20,6 @@ CONTRADICTION_SEVERE = 35.0
 # Max points subtracted from a dimension score due to expert contradictions.
 MAX_CONTRADICTION_PENALTY = 10.0
 
-# Staleness: volatile facts older than this start losing score (linear, capped).
-STALENESS_GRACE_DAYS = 180
-MAX_STALENESS_PENALTY = 6.0
-VOLATILE_FACT_KEYS = {
-    "default_sweep_apy_pct", "best_cash_apy_pct", "margin_rate_pct",
-}
-
 # Recency decay half-life-ish constant (days) for evidence weighting.
 RECENCY_TAU_DAYS = 540.0
 

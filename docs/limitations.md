@@ -19,8 +19,8 @@ preferential logic.
 ## Scores are estimates, bounded by their evidence
 
 - Scores reflect the evidence **available at collection time**. Each data point carries a
-  retrieval date and an as-of date; volatile values (cash yields, margin rates) change
-  frequently and are penalized for staleness rather than silently trusted. **Always verify
+  retrieval date and an as-of date. Expired score-critical values are withheld from the
+  dashboard and removed from score inputs rather than silently trusted. **Always verify
   current terms on the linked source page before making decisions.**
 - Some seed data was **manually curated from public pages** (marked as such in the Evidence
   Viewer, with lower confidence grades where warranted). Collectors re-verify what they can
@@ -48,8 +48,8 @@ preferential logic.
   and Interactive Brokers have no CFPB entity. **Absence is a coverage gap, not a clean
   record**, and is displayed as such. Complaint volumes also scale with customer counts;
   scoring normalizes by disclosed client assets, an imperfect denominator.
-- **Conglomerate attribution.** Merrill Edge (Bank of America), Ally Invest (Ally
-  Financial), and J.P. Morgan Self-Directed (JPMorgan Chase) sit inside parents whose CFPB
+- **Conglomerate attribution.** Merrill Edge (Bank of America) and J.P. Morgan
+  Self-Directed (JPMorgan Chase) sit inside parents whose CFPB
   complaint streams are dominated by unrelated business lines (auto loans, credit cards,
   retail banking) — those entities are deliberately excluded rather than unfairly counted.
   SoFi's and Webull's entities are shown with an explicit attribution caveat and never move
@@ -61,11 +61,13 @@ preferential logic.
 
 ## Freshness and completeness
 
-- The data-freshness table on the home page shows when each collector last ran and whether
-  it succeeded, was skipped (e.g. Reddit without API credentials), or failed. Several expert
+- The home-page coverage KPI and Product Fact Ledger show the current/withheld split. A
+  daily pipeline records each structured verification, archives the source payload, and
+  fails its freshness gate when current coverage falls below 95% or any score-critical fact
+  is expired. Several expert
   sites block automated verification (HTTP 403); those ratings rely on curated values until
   re-verified.
-- Phase 1 tracks six brokers and sixteen dimensions. Anything not measured (e.g. options
+- Phase 1 tracks eleven brokers and sixteen dimensions. Anything not measured (e.g. options
   execution quality, HSA offerings) is simply out of scope — absence of a dimension is not a
   judgment.
 - AUM/size figures are approximate public figures used only for context and complaint-rate
@@ -81,3 +83,7 @@ preferential logic.
 - Contradiction detection compares publishers' *published numbers*; publishers use different
   rubrics and review dates, which explains some disagreement. That context is preserved via
   links to both sources.
+- Cost Lab relationship benefits depend on card approval, program enrollment, qualifying
+  balances, eligible purchases, redemption behavior, and continued program terms. The
+  calculator shows conditional estimates, not guaranteed savings, and does not model credit
+  card interest. Carrying a balance can overwhelm any rewards value.

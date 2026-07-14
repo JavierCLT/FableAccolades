@@ -13,6 +13,7 @@ plotly>=5.22
 # Collectors
 beautifulsoup4>=4.12
 lxml>=5.2
+pypdf>=5.0         # structured extraction from official broker rate-sheet PDFs
 praw>=7.7           # Reddit API (optional; used only if credentials are configured)
 # playwright>=1.45  # optional: selective JS-rendered collection; install + `playwright install chromium` if needed
 

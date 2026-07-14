@@ -62,7 +62,7 @@ c3.metric("Brokers affected", wd["broker_name"].nunique())
 
 st.subheader("Withdrawal scoreboard by publisher")
 score = (wd.groupby(["source_name", "Status"]).size().unstack(fill_value=0))
-st.dataframe(score, use_container_width=True)
+st.dataframe(score, width="stretch")
 st.caption(
     "High counts don't necessarily mean bad faith — publishers restructure sites and rotate "
     "coverage. But every one of these was a public claim that quietly vanished. "

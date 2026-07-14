@@ -9,23 +9,25 @@ import streamlit as st
 from components import data
 from components.evidence import dimension_evidence_ids, evidence_expander
 from components.hovercard import evidence_items, hover_html
-from components.layout import confidence_badge, page_setup
+from components.layout import compact_disclaimer, confidence_badge, page_setup, section_header
 
-page_setup("Rankings by Persona", icon="🏆")
+page_setup(
+    "Tune the ranking",
+    icon="🏆",
+    subtitle="Start with an investor profile, then change any weight to reflect your real priorities.",
+    eyebrow="Advanced decision controls",
+)
 
 personas = data.personas()
 dims = data.dimensions()
 
-persona_name = st.pills("Investor persona", personas["name"].tolist(),
-                        default=personas["name"].iloc[0], selection_mode="single")
-if not persona_name:
-    persona_name = personas["name"].iloc[0]
+persona_name = st.selectbox("Investor profile", personas["name"].tolist(), index=0)
 persona = personas[personas["name"] == persona_name].iloc[0]
 st.caption(persona["description"])
 
 default_weights = data.persona_weights(int(persona["id"]))
 
-with st.expander("⚖️ Adjust dimension weights (defaults shown for this persona)"):
+with st.expander("Adjust all 16 dimension weights"):
     st.caption(
         "Weights are renormalized automatically. Set a dimension to 0 to exclude it. "
         "The scoring formula is documented on the Methodology page."
@@ -46,7 +48,7 @@ with st.expander("⚖️ Adjust dimension weights (defaults shown for this perso
 scores = data.compute_persona_scores(weights)
 ds = data.dimension_scores()
 
-st.subheader(f"Ranking: {persona_name}")
+section_header(f"Ranking for {persona_name}")
 st.caption(
     "Score = weighted mean of per-dimension scores (each blends objective facts 45% / "
     "customer voice 35% / expert consensus 20%, renormalized when a component is missing) "
@@ -57,8 +59,8 @@ st.caption(
 for rank, (_, row) in enumerate(scores.iterrows(), start=1):
     with st.container(border=True):
         c1, c2, c3, c4 = st.columns([3, 2, 2, 2])
-        medal = {1: "🥇", 2: "🥈", 3: "🥉"}.get(rank, f"#{rank}")
-        c1.markdown(f"### {medal} {row['broker_name']}")
+        rank_label = {1: "Best fit", 2: "Runner-up", 3: "Third"}.get(rank, f"#{rank}")
+        c1.markdown(f"### {rank_label}: {row['broker_name']}")
         c2.metric("Weighted score", f"{row['score']:.1f}")
         c3.metric("Confidence", confidence_badge(row["confidence"]))
         c4.metric("Evidence links", int(row["evidence_count"]))
@@ -98,3 +100,5 @@ for rank, (_, row) in enumerate(scores.iterrows(), start=1):
                         f"Evidence for {r['dim_name']}",
                         dimension_evidence_ids(int(r["broker_id"]), int(r["dimension_id"])),
                     )
+
+compact_disclaimer()

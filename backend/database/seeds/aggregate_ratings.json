@@ -222,6 +222,15 @@
       "title": "Webull on the App Store"
     },
     {
+      "broker": "public",
+      "source": "apple_app_store",
+      "rating": 4.7,
+      "review_count": 84000,
+      "as_of": "2026-07-06",
+      "url": "https://apps.apple.com/us/app/public-invest-trade/id1204112719",
+      "title": "Public on the App Store"
+    },
+    {
       "broker": "ally",
       "source": "apple_app_store",
       "rating": 4.7,

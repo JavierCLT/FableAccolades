@@ -1,3 +1,7 @@
+"""Current fees, rates, and product leaders."""
+
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -6,119 +10,173 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import pandas as pd
 import streamlit as st
 
-import html as _html
-
 from components import data
-from components.evidence import evidence_expander
-from components.hovercard import hover_html
-from components.layout import page_setup
+from components.charts import ranking_bar_chart
+from components.layout import compact_disclaimer, page_setup
 
-page_setup("Product Fact Comparison", icon="📋")
+page_setup(
+    "Fees & Products",
+    icon="📋",
+    subtitle="Current economics first. Expired values are excluded, never carried forward.",
+    eyebrow="Current decision facts",
+)
+
+brokers = data.brokers()
+facts = data.product_facts()
+current = facts[facts["is_current"]].copy()
+summary = data.product_fact_freshness_summary(facts)
+economic = data.economic_value_rankings()
+
+
+def _fact_rows(key: str) -> pd.DataFrame:
+    return current[(current["fact_key"] == key) & current["value_numeric"].notna()].copy()
+
+
+def _winner(key: str, direction: str = "max") -> pd.Series | None:
+    rows = _fact_rows(key)
+    if rows.empty:
+        return None
+    index = rows["value_numeric"].idxmax() if direction == "max" else rows["value_numeric"].idxmin()
+    return rows.loc[index]
+
+
+def _winner_rows(key: str, direction: str = "max") -> pd.DataFrame:
+    rows = _fact_rows(key)
+    if rows.empty:
+        return rows
+    winning_value = rows["value_numeric"].max() if direction == "max" else rows["value_numeric"].min()
+    return rows[rows["value_numeric"].eq(winning_value)].copy()
+
+
+def _money(value: float) -> str:
+    return f"${value:g}"
+
+
+default_cash = _winner("default_sweep_apy_pct")
+best_cash = _winner("best_cash_apy_pct")
+options = _winner_rows("options_contract_fee_usd", "min")
+free_transfers = _fact_rows("outgoing_acat_fee_usd").query("value_numeric == 0")
+
+default_cash_name = default_cash["broker_name"] if default_cash is not None else "Not enough current data"
+default_cash_detail = (
+    f"{default_cash['value_numeric']:.2f}% / verified {default_cash['as_of_date']}"
+    if default_cash is not None
+    else "No value inside the seven-day verification window"
+)
+best_cash_name = best_cash["broker_name"] if best_cash is not None else "Not enough current data"
+best_cash_detail = (
+    f"{best_cash['value_numeric']:.2f}% / conditions may apply"
+    if best_cash is not None
+    else "No value inside the seven-day verification window"
+)
+if options.empty:
+    options_name = "Not enough current data"
+    options_detail = "No value inside the 30-day verification window"
+elif len(options) == 1:
+    options_name = options.iloc[0]["broker_name"]
+    options_detail = f"{_money(float(options.iloc[0]['value_numeric']))} per contract before regulatory fees"
+else:
+    options_name = f"{len(options)} brokers tie"
+    options_detail = f"{_money(float(options.iloc[0]['value_numeric']))} per contract before regulatory fees"
 
 st.markdown(
-    "Objective facts from each broker's **own public pages** — no editorial spin. "
-    "Volatile values (yields, margin rates) show their *as-of* date; anything past its "
-    "freshness window is flagged and penalized in scoring, never silently trusted."
+    f"""
+    <div class="bbi-kpi-grid">
+      <div class="bbi-kpi primary"><span>Best automatic cash yield</span><strong>{default_cash_name}</strong><small>{default_cash_detail}</small></div>
+      <div class="bbi-kpi"><span>Best available cash yield</span><strong>{best_cash_name}</strong><small>{best_cash_detail}</small></div>
+      <div class="bbi-kpi"><span>Lowest options commission</span><strong>{options_name}</strong><small>{options_detail}</small></div>
+      <div class="bbi-kpi"><span>No transfer-out fee</span><strong>{len(free_transfers)} brokers</strong><small>verified inside the 30-day fee SLA</small></div>
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
 
-facts = data.q(
-    """SELECT pf.*, b.name AS broker_name, b.slug AS broker_slug,
-              d.name AS dim_name, d.sort_order,
-              e.confidence, e.retrieval_date, e.url, e.title
-       FROM product_facts pf
-       JOIN brokers b ON b.id = pf.broker_id
-       JOIN dimensions d ON d.id = pf.dimension_id
-       JOIN evidence e ON e.id = pf.evidence_id
-       ORDER BY d.sort_order, pf.fact_key, b.name"""
-)
+overview_left, overview_right = st.columns([0.82, 1.18])
+with overview_left:
+    st.markdown(
+        '<div class="bbi-panel-heading"><span>Economic value</span><strong>Fees, cash and banking integration combined</strong></div>',
+        unsafe_allow_html=True,
+    )
+    st.plotly_chart(
+        ranking_bar_chart(economic, limit=11, height=440),
+        width="stretch",
+        key="economic_ranking",
+    )
 
-FACT_LABELS = {
-    "stock_etf_commission_usd": "Stock/ETF commission",
-    "options_contract_fee_usd": "Options per-contract fee",
-    "margin_rate_pct": "Margin rate (≈$25k balance) ⏳",
-    "account_fee_usd": "Account/inactivity fee",
-    "default_sweep_apy_pct": "Default cash sweep APY ⏳",
-    "best_cash_apy_pct": "Best available cash APY ⏳",
-    "outgoing_acat_fee_usd": "Outgoing ACAT fee (full)",
-    "fractional_shares_scope": "Fractional shares",
-    "ira_match_pct": "IRA contribution match",
-    "robo_advisor_fee_pct": "Robo-advisor fee",
-    "human_advisor_access": "Human advisor access",
-    "support_24_7": "24/7 support",
-    "branch_count": "Branches",
-    "banking_level": "Banking features",
-    "crypto_trading": "Crypto trading",
-    "futures_trading": "Futures trading",
-    "international_trading": "International markets",
-    "bonds_cds_available": "Bonds & CDs",
-    "security_level": "Security features",
-    "tax_lot_control": "Tax-lot control",
+with overview_right:
+    st.markdown(
+        '<div class="bbi-panel-heading"><span>Cash and margin</span><strong>Blank means the verification window expired</strong></div>',
+        unsafe_allow_html=True,
+    )
+    rate_keys = {
+        "default_sweep_apy_pct": "Automatic cash",
+        "best_cash_apy_pct": "Best available",
+        "margin_rate_pct": "Margin APR",
+    }
+    rate_view = current[current["fact_key"].isin(rate_keys)].copy()
+    rate_view["Metric"] = rate_view["fact_key"].map(rate_keys)
+    rate_view["Rate"] = rate_view["value_numeric"].map(lambda value: f"{value:.2f}%")
+    rate_table = rate_view.pivot_table(
+        index="broker_name", columns="Metric", values="Rate", aggfunc="first"
+    ).reindex(brokers["name"])
+    rate_dates = rate_view.groupby("broker_name")["as_of_date"].max().reindex(brokers["name"])
+    rate_table["Latest verification"] = rate_dates
+    rate_table = rate_table.rename_axis("Broker").reset_index()
+    st.dataframe(
+        rate_table,
+        width="stretch",
+        height=440,
+        hide_index=True,
+        column_config={"Broker": st.column_config.TextColumn(width="medium")},
+    )
+
+st.markdown(
+    '<div class="bbi-panel-heading"><span>Trading and account fees</span><strong>Comparable current charges across all eleven brokers</strong></div>',
+    unsafe_allow_html=True,
+)
+fee_keys = {
+    "stock_etf_commission_usd": "Stock / ETF",
+    "options_contract_fee_usd": "Options contract",
+    "outgoing_acat_fee_usd": "Transfer out",
+    "account_fee_usd": "Account fee",
 }
+fee_view = current[current["fact_key"].isin(fee_keys)].copy()
+fee_view["Fee"] = fee_view["fact_key"].map(fee_keys)
+fee_view["Amount"] = fee_view["value_numeric"].map(_money)
+fee_table = fee_view.pivot_table(
+    index="broker_name", columns="Fee", values="Amount", aggfunc="first"
+).reindex(brokers["name"])
+fee_table = fee_table.rename_axis("Broker").reset_index()
+st.dataframe(fee_table, width="stretch", hide_index=True, height=430)
 
-dim_filter = st.pills("Filter by dimension (optional)", facts["dim_name"].unique().tolist(),
-                      selection_mode="multi")
-view = facts[facts["dim_name"].isin(dim_filter)] if dim_filter else facts
-
-view = view.copy()
-view["Fact"] = view["fact_key"].map(FACT_LABELS).fillna(view["fact_key"])
-
-# Hover-to-verify fact matrix: every cell carries its source link, as-of date, and
-# confidence on mouseover. (⏳ = volatile fact; verify the as-of date before acting.)
-brokers_order = sorted(view["broker_name"].unique())
-cell_lookup = {(r["Fact"], r["broker_name"]): r for _, r in view.iterrows()}
-fact_rows = view[["sort_order", "dim_name", "Fact"]].drop_duplicates().sort_values(
-    ["sort_order", "Fact"])
-
-html_parts = ['<table class="bbi-facttable"><thead><tr><th>Fact</th>']
-html_parts += [f"<th>{_html.escape(b)}</th>" for b in brokers_order]
-html_parts.append("</tr></thead><tbody>")
-last_dim = None
-for _, fr in fact_rows.iterrows():
-    if fr["dim_name"] != last_dim:
-        last_dim = fr["dim_name"]
-        html_parts.append(
-            f'<tr><td colspan="{len(brokers_order) + 1}" style="background:#262935;'
-            f'color:#fafafa;font-weight:700">{_html.escape(last_dim)}</td></tr>'
-        )
-    html_parts.append(f"<tr><td><b>{_html.escape(fr['Fact'])}</b></td>")
-    for b in brokers_order:
-        r = cell_lookup.get((fr["Fact"], b))
-        if r is None:
-            html_parts.append('<td style="color:#777">—</td>')
-            continue
-        cell = hover_html(
-            r["value_text"],
-            [{"source": f"{b} (official page)", "title": r["title"] or r["url"], "url": r["url"],
-              "date": r["retrieval_date"], "method": "manual_curation",
-              "confidence": r["confidence"], "unavailable": False}],
-            head=f"Source · as of {r['as_of_date']}",
-        )
-        html_parts.append(f"<td>{cell}</td>")
-    html_parts.append("</tr>")
-html_parts.append("</tbody></table>")
-st.markdown("".join(html_parts), unsafe_allow_html=True)
-st.caption("💡 Hover any value for its source link, as-of date, and confidence. "
-           "⏳ marks volatile facts that move with rates.")
-
-st.subheader("Evidence & data age for a specific fact")
-broker_choice = st.pills("Broker", sorted(view["broker_name"].unique()),
-                         default=sorted(view["broker_name"].unique())[0], selection_mode="single")
-if not broker_choice:
-    broker_choice = sorted(view["broker_name"].unique())[0]
-fact_choice = st.selectbox("Fact", sorted(view["Fact"].unique()))
-sel = view[(view["Fact"] == fact_choice) & (view["broker_name"] == broker_choice)]
-if sel.empty:
-    st.caption("No data recorded for this combination.")
-else:
-    r = sel.iloc[0]
-    st.markdown(f"**{r['broker_name']} — {fact_choice}:** {r['value_text']}")
-    st.caption(f"As of: {r['as_of_date']} · Evidence confidence: {r['confidence']}")
-    evidence_expander("Source evidence", [int(r["evidence_id"])], expanded=True)
-
-st.divider()
-stale = facts[facts["fact_key"].isin(["default_sweep_apy_pct", "best_cash_apy_pct", "margin_rate_pct"])]
-oldest = pd.to_datetime(stale["as_of_date"]).min().date()
-st.caption(
-    f"⏳ Volatile facts on this page carry as-of dates back to {oldest}. Rates move with the "
-    "Fed and with broker repricing — always verify against the linked source page before acting."
+st.markdown(
+    '<div class="bbi-panel-heading"><span>Product access</span><strong>A quick market map of the capabilities investors ask for most</strong></div>',
+    unsafe_allow_html=True,
 )
+product_keys = {
+    "fractional_shares_scope": ("Fractional investing", {0: "No", 1: "Limited", 2: "Stocks + ETFs"}),
+    "banking_level": ("Banking integration", {0: "None", 1: "Basic", 2: "Strong", 3: "Full"}),
+    "crypto_trading": ("Crypto", {0: "No", 1: "Yes"}),
+    "futures_trading": ("Futures", {0: "No", 1: "Yes"}),
+    "international_trading": ("International", {0: "No", 1: "Yes"}),
+    "bonds_cds_available": ("Bonds / CDs", {0: "No", 1: "Yes"}),
+    "human_advisor_access": ("Human advisor", {0: "No", 1: "Yes"}),
+}
+product_view = current[current["fact_key"].isin(product_keys)].copy()
+product_view["Product"] = product_view["fact_key"].map(lambda key: product_keys[key][0])
+product_view["Access"] = product_view.apply(
+    lambda row: product_keys[row["fact_key"]][1].get(int(row["value_numeric"]), "Unknown"),
+    axis=1,
+)
+product_table = product_view.pivot_table(
+    index="broker_name", columns="Product", values="Access", aggfunc="first"
+).reindex(brokers["name"])
+product_table = product_table.rename_axis("Broker").reset_index()
+st.dataframe(product_table, width="stretch", hide_index=True, height=430)
+
+st.caption(
+    f"{summary['fresh']} of {summary['total']} facts are currently inside their verification window. "
+    "Rates expire after 7 days, margin after 14 days, fees after 30 days, and product features after 90 days."
+)
+
+compact_disclaimer()

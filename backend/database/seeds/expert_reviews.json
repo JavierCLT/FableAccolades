@@ -53,6 +53,7 @@
         "merrill": "https://www.stockbrokers.com/review/merrilledge",
         "sofi": "https://www.stockbrokers.com/review/sofiinvest",
         "webull": "https://www.stockbrokers.com/review/webull",
+        "public": "https://www.stockbrokers.com/review/public-com",
         "ally": "https://www.stockbrokers.com/review/allyinvest",
         "jpmorgan": "https://www.stockbrokers.com/review/jpmorgan-self-directed"
       },
@@ -67,6 +68,7 @@
         "merrill": 4.5,
         "sofi": 3.5,
         "webull": 4.5,
+        "public": 3.0,
         "ally": 3.5,
         "jpmorgan": 3.5
       }

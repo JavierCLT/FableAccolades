@@ -55,6 +55,29 @@ evidence volume (0–40), source quality (0–20), recency (0–25), and corrobo
 (0–15). Low evidence, stale data, weak sources, and expert disagreement all reduce
 confidence. Exact formulas: [scoring_logic.md](scoring_logic.md).
 
+## Cost Lab and relationship benefits
+
+The Cost Lab is a separate decision model; it does not alter dimension or persona scores.
+It estimates annual net impact as missed cash interest plus current trading, account,
+transfer, and margin costs, minus relationship benefits the user explicitly chooses to
+include.
+
+Relationship benefits follow three rules:
+
+1. Only current, official-source terms with explicit dollar or percentage values are
+   eligible for calculation.
+2. Card rewards are incremental. Fidelity and Robinhood rewards are compared with the
+   user's current-card reward rate; Merrill's BofA Rewards value counts only the tier bonus
+   applied to the entered eligible-card base rate.
+3. Eligibility costs and conditions remain visible. Robinhood Gold's required subscription
+   is deducted, BofA Rewards tiers depend on entered qualifying Bank of America and Merrill
+   balances, and optional subscription credits are counted only when the user says they
+   expect to use them.
+
+Welcome offers, loan discounts, ATM reimbursements, lounge access, tax effects, and premium
+card benefits without a comparable personal dollar value are displayed as context but are
+not added to the result. This avoids treating a feature list as guaranteed savings.
+
 ## Contradiction detection
 
 For each broker × dimension (and for overall ratings), all pairs of expert sources are
@@ -64,8 +87,10 @@ penalize both the expert component (up to −10 points) and confidence.
 
 ## Penalties and rewards
 
-- **Penalized:** stale volatile data (yields/margin rates past 180 days: up to −6 points),
-  low evidence counts (via confidence), expert contradictions (score + confidence),
+- **Withheld:** expired score-critical facts are removed from score inputs and shown as
+  withheld in the dashboard. Cash yields use a 7-day SLA; margin rates use 14 days;
+  common fees and IRA matches use 30 days; other facts use a 90-day default.
+- **Penalized:** low evidence counts (via confidence), expert contradictions (score + confidence),
   self-reported claims (broker marketing statements are excluded; only checkable product
   facts are recorded), worsening CFPB complaint trends (momentum).
 - **Rewarded:** verifiable objective facts with high-quality evidence, consistent customer

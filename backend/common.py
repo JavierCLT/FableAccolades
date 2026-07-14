@@ -97,3 +97,14 @@ def save_raw(source_slug: str, name: str, payload: Any) -> Path:
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=1, default=str)
     return path
+
+
+def save_raw_bytes(source_slug: str, name: str, payload: bytes, suffix: str) -> Path:
+    """Version a binary source document under data/raw with its original extension."""
+    out_dir = config.RAW_DIR / source_slug
+    out_dir.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    clean_suffix = suffix if suffix.startswith(".") else f".{suffix}"
+    path = out_dir / f"{stamp}__{name}{clean_suffix}"
+    path.write_bytes(payload)
+    return path

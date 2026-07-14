@@ -62,7 +62,7 @@ st.dataframe(
     .rename(columns={"id": "ID", "broker_name": "Broker", "source_name": "Source",
                      "title": "Title", "retrieval_date": "Retrieved",
                      "collection_method": "Method", "confidence": "Confidence", "url": "URL"}),
-    use_container_width=True, hide_index=True, height=420,
+    width="stretch", hide_index=True, height=420,
 )
 
 st.subheader("Inspect")

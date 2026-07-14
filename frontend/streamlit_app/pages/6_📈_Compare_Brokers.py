@@ -1,3 +1,8 @@
+"""Focused two- or three-broker comparison dashboard."""
+
+from __future__ import annotations
+
+import html as _html
 import sys
 from pathlib import Path
 
@@ -7,73 +12,135 @@ import pandas as pd
 import streamlit as st
 
 from components import data
-from components.charts import radar_chart, score_bar
-from components.evidence import dimension_evidence_ids, evidence_expander
-from components.hovercard import evidence_items, hover_html
-from components.layout import confidence_badge, page_setup
+from components.charts import dimension_heatmap, radar_chart
+from components.decision import PROFILE_PRESETS, broker_edges, top_weighted_dimensions
+from components.layout import compact_disclaimer, page_setup
 
-page_setup("Multi-Broker Comparison", icon="📈")
+page_setup(
+    "Compare Brokers",
+    icon="📈",
+    subtitle="Two or three contenders, the differences that matter, and a direct verdict.",
+    eyebrow="Decision workspace",
+)
 
 brokers = data.brokers()
-default = ["Fidelity", "Charles Schwab"]
-chosen = st.multiselect("Select 2–4 brokers", brokers["name"].tolist(), default=default,
-                        max_selections=4)
+personas = data.personas()
+dimension_scores = data.dimension_scores()
+
+controls = st.columns([1.25, 1])
+with controls[0]:
+    chosen = st.multiselect(
+        "Brokers",
+        brokers["name"].tolist(),
+        default=[name for name in ["Fidelity", "Charles Schwab"] if name in brokers["name"].tolist()],
+        max_selections=3,
+        placeholder="Choose two or three",
+    )
+with controls[1]:
+    preset = st.selectbox("Investor situation", list(PROFILE_PRESETS), index=0)
+
 if len(chosen) < 2:
-    st.info("Select at least two brokers to compare.")
+    st.info("Choose at least two brokers.")
     st.stop()
 
-slugs = brokers[brokers["name"].isin(chosen)].set_index("name").loc[chosen]["slug"].tolist()
-ids = brokers[brokers["name"].isin(chosen)].set_index("slug")["id"].to_dict()
-ds = data.dimension_scores()
-sel = ds[ds["broker_slug"].isin(slugs)]
+slug_lookup = brokers.set_index("name")["slug"].to_dict()
+slugs = [slug_lookup[name] for name in chosen]
+persona = personas[personas["slug"] == PROFILE_PRESETS[preset]].iloc[0]
+weights = data.persona_weights(int(persona["id"]))
+rankings = data.compute_persona_scores(weights).reset_index(drop=True)
+rankings["rank"] = range(1, len(rankings) + 1)
+selected_rankings = rankings[rankings["broker_slug"].isin(slugs)].sort_values("score", ascending=False)
+winner = selected_rankings.iloc[0]
+runner_up = selected_rankings.iloc[1]
+strengths, risk = broker_edges(dimension_scores, weights, winner["broker_slug"])
 
-st.subheader("Dimension radar")
-st.plotly_chart(radar_chart(sel, slugs), use_container_width=True)
-st.caption("Each axis is the blended 0–100 dimension score (facts 45 / customers 35 / experts 20).")
+st.markdown(
+    f"""
+    <div class="bbi-winner-band">
+      <div>
+        <div class="label">Best of these brokers for {_html.escape(preset)}</div>
+        <h1>{_html.escape(winner['broker_name'])}</h1>
+        <p>Leads {_html.escape(runner_up['broker_name'])} by {winner['score'] - runner_up['score']:.1f} points.</p>
+      </div>
+      <div class="bbi-winner-score"><strong>{winner['score']:.1f}</strong><small>fit score / rank #{int(winner['rank'])} market-wide</small></div>
+    </div>
+    <div class="bbi-verdict-grid">
+      <div><span>Decisive strength</span><strong>{_html.escape(strengths[0]['name'] if strengths else 'Balanced profile')}</strong></div>
+      <div><span>Confidence</span><strong>{winner['confidence']:.0f} / 100</strong></div>
+      <div class="risk"><span>Main trade-off</span><strong>{_html.escape(risk['name'] if risk else 'No major gap')}</strong></div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
-st.subheader("Score table")
-table = sel.pivot_table(index=["sort_order", "dim_name"], columns="broker_name", values="score")
-table = table.droplevel(0)[chosen]
-best = table.max(axis=1)
-styled = table.style.format("{:.0f}").highlight_max(axis=1, props="background-color:#d4f7d4;font-weight:bold")
-st.dataframe(styled, use_container_width=True, height=600)
-
-conf_table = sel.pivot_table(index=["sort_order", "dim_name"], columns="broker_name",
-                             values="confidence").droplevel(0)[chosen]
-with st.expander("Confidence behind each cell"):
-    st.dataframe(conf_table.style.format("{:.0f}"), use_container_width=True)
-    st.caption("Confidence 0–100: evidence volume, source quality, recency, corroboration.")
-
-st.subheader("Zoom into one dimension")
-_dims = data.dimensions()["name"].tolist()
-dim_name = st.pills("Dimension", _dims, default=_dims[0], selection_mode="single")
-if not dim_name:
-    dim_name = _dims[0]
-zoom = sel[sel["dim_name"] == dim_name].sort_values("score", ascending=False)
-st.plotly_chart(score_bar(zoom, "broker_name", "score", "broker_slug"), use_container_width=True)
-for _, r in zoom.iterrows():
-    comp = " · ".join(
-        f"{lbl} {r[key]:.0f}" for lbl, key in
-        (("facts", "fact_component"), ("customers", "customer_component"), ("experts", "expert_component"))
-        if pd.notna(r[key])
-    )
-    ev_ids = dimension_evidence_ids(int(r["broker_id"]), int(r["dimension_id"]))
+radar_dimensions = top_weighted_dimensions(weights, 8)
+charts = st.columns([1.05, 0.95])
+with charts[0]:
     st.markdown(
-        f"<b>{r['broker_name']}</b> — "
-        + hover_html(f"{r['score']:.0f}/100", evidence_items(ev_ids, limit=5))
-        + f" (confidence {confidence_badge(r['confidence'])}) · {comp}",
+        '<div class="bbi-panel-heading"><span>Competitive shape</span><strong>Strengths and weaknesses at a glance</strong></div>',
         unsafe_allow_html=True,
     )
-    evidence_expander(f"Evidence — {r['broker_name']} / {dim_name}", ev_ids)
+    st.plotly_chart(
+        radar_chart(dimension_scores, slugs, radar_dimensions, height=410),
+        width="stretch",
+        key="compare_radar",
+    )
+with charts[1]:
+    st.markdown(
+        '<div class="bbi-panel-heading"><span>Exact scores</span><strong>Same dimensions, easier gap detection</strong></div>',
+        unsafe_allow_html=True,
+    )
+    st.plotly_chart(
+        dimension_heatmap(dimension_scores, slugs, radar_dimensions, height=410),
+        width="stretch",
+        key="compare_heatmap",
+    )
 
-st.subheader("Objective facts side-by-side")
-facts = data.q(
-    """SELECT pf.fact_key, pf.value_text, b.name AS broker_name, d.sort_order
-       FROM product_facts pf JOIN brokers b ON b.id = pf.broker_id
-       JOIN dimensions d ON d.id = pf.dimension_id"""
+customer = data.customer_voice_rankings()
+customer = customer[customer["broker_slug"].isin(slugs)].set_index("broker_name").reindex(chosen)
+customer_table = customer[["score", "support", "reliability", "app", "trend", "coverage"]].copy()
+customer_table.columns = [
+    "Customer Voice",
+    "Support",
+    "Reliability",
+    "App",
+    "Trend",
+    "Coverage",
+]
+
+st.markdown(
+    '<div class="bbi-panel-heading"><span>Customer voice</span><strong>Support and reliability carry the most weight</strong></div>',
+    unsafe_allow_html=True,
 )
-facts = facts[facts["broker_name"].isin(chosen)]
-ft = facts.pivot_table(index="fact_key", columns="broker_name", values="value_text",
-                       aggfunc="first")[chosen]
-st.dataframe(ft, use_container_width=True, height=600)
-st.caption("Full labels, data ages, and per-fact evidence: Product Fact Comparison page.")
+st.dataframe(
+    customer_table.style.format("{:.0f}"),
+    width="stretch",
+    height=155,
+)
+
+facts = data.product_facts()
+facts = facts[facts["broker_name"].isin(chosen) & facts["is_current"]].copy()
+fact_labels = {
+    "stock_etf_commission_usd": "Stock / ETF trade",
+    "options_contract_fee_usd": "Options contract",
+    "default_sweep_apy_pct": "Automatic cash rate",
+    "best_cash_apy_pct": "Best cash rate",
+    "margin_rate_pct": "Margin APR",
+    "outgoing_acat_fee_usd": "Transfer-out fee",
+    "fractional_shares_scope": "Fractional investing",
+    "banking_level": "Banking integration",
+}
+fact_view = facts[facts["fact_key"].isin(fact_labels)].copy()
+fact_view["Decision fact"] = fact_view["fact_key"].map(fact_labels)
+fact_view["Current value"] = fact_view["value_text"]
+fact_table = fact_view.pivot_table(
+    index="Decision fact", columns="broker_name", values="Current value", aggfunc="first"
+).reindex(fact_labels.values()).reindex(columns=chosen)
+
+st.markdown(
+    '<div class="bbi-panel-heading"><span>Current economics</span><strong>Expired rates and fees are omitted</strong></div>',
+    unsafe_allow_html=True,
+)
+st.dataframe(fact_table, width="stretch", height=350)
+
+compact_disclaimer()

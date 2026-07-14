@@ -50,6 +50,7 @@ BROKER_NAME_VARIANTS: dict[str, list[str]] = {
     "sofi": ["SoFi"],
     "webull": ["Webull"],
     "ally": ["Ally"],
+    "public": ["Public.com", "Public Investing"],
     "jpmorgan": ["J.P. Morgan", "JP Morgan", "JPMorgan"],
 }
 
@@ -85,6 +86,7 @@ class ExpertSitesCollector(BaseCollector):
             JOIN evidence e ON e.id = er.evidence_id
             JOIN sources s ON s.id = er.source_id
             JOIN brokers b ON b.id = er.broker_id
+            WHERE b.active = 1
             """
         ).fetchall()
 

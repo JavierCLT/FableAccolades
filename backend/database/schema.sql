@@ -104,6 +104,40 @@ CREATE TABLE IF NOT EXISTS product_facts (
     UNIQUE (broker_id, fact_key)
 );
 
+-- Every structured fact refresh attempt is retained. A successful page fetch alone is
+-- not verification: status only becomes updated/unchanged after a value and source date
+-- are machine-extracted from the authoritative page or document.
+CREATE TABLE IF NOT EXISTS fact_verification_runs (
+    id                     INTEGER PRIMARY KEY,
+    broker_id              INTEGER NOT NULL REFERENCES brokers(id),
+    fact_key               TEXT NOT NULL,
+    source_url             TEXT NOT NULL,
+    status                 TEXT NOT NULL CHECK (status IN
+                              ('updated','unchanged','failed','stale')),
+    observed_value_numeric REAL,
+    source_as_of_date      TEXT,
+    detail                 TEXT,
+    checked_at             TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_fact_verification_lookup
+    ON fact_verification_runs(broker_id, fact_key, checked_at);
+
+-- Material value changes form a public audit trail and can later power alerts.
+CREATE TABLE IF NOT EXISTS fact_changes (
+    id                     INTEGER PRIMARY KEY,
+    broker_id              INTEGER NOT NULL REFERENCES brokers(id),
+    fact_key               TEXT NOT NULL,
+    old_value_numeric      REAL,
+    new_value_numeric      REAL,
+    old_value_text         TEXT,
+    new_value_text         TEXT,
+    source_as_of_date      TEXT NOT NULL,
+    detected_at            TEXT NOT NULL,
+    evidence_id            INTEGER NOT NULL REFERENCES evidence(id)
+);
+CREATE INDEX IF NOT EXISTS idx_fact_changes_lookup
+    ON fact_changes(broker_id, fact_key, detected_at);
+
 -- Expert review ratings (overall or per dimension), normalized to 0-100.
 CREATE TABLE IF NOT EXISTS expert_ratings (
     id               INTEGER PRIMARY KEY,

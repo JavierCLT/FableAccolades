@@ -30,6 +30,7 @@ class BrokerSitesCollector(BaseCollector):
             FROM product_facts pf
             JOIN evidence e ON e.id = pf.evidence_id
             JOIN brokers b ON b.id = pf.broker_id
+            WHERE b.active = 1
             ORDER BY b.slug, e.url
             """
         ).fetchall()

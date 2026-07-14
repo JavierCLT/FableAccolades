@@ -36,7 +36,7 @@ st.dataframe(
     view[["broker_name", "award_title", "category", "source_name", "year", "rank"]]
     .rename(columns={"broker_name": "Broker", "award_title": "Award", "category": "Category",
                      "source_name": "Publisher", "year": "Year", "rank": "Rank"}),
-    use_container_width=True, hide_index=True,
+    width="stretch", hide_index=True,
 )
 
 st.subheader("Accolades per broker")

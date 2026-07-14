@@ -44,8 +44,10 @@ def render_evidence_rows(df: pd.DataFrame) -> None:
 def evidence_expander(label: str, evidence_ids: list[int], *, expanded: bool = False) -> None:
     """Click-to-reveal evidence. Uses a popover so it can live inside expanders/cards."""
     n = len(evidence_ids)
-    with st.popover(f"🔍 {label} ({n} evidence item{'s' if n != 1 else ''})",
-                    use_container_width=True):
+    with st.popover(
+        f"🔍 {label} ({n} evidence item{'s' if n != 1 else ''})",
+        width="stretch",
+    ):
         render_evidence_rows(data.evidence_by_ids(evidence_ids))
 
 

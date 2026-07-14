@@ -6,7 +6,7 @@ live in `backend/scoring/constants.py`. Scores are 0–100 throughout.
 ## 1. Component blend per dimension
 
 ```
-dimension_score = blend(fact 0.45, customer 0.35, expert 0.20) − staleness_penalty
+dimension_score = blend(fact 0.45, customer 0.35, expert 0.20)
 ```
 
 Weights renormalize over available components (e.g. a dimension with no fact rule uses
@@ -91,11 +91,15 @@ expert  = weighted_mean − penalty
 All source pairs per broker×dimension (and overall): gap ≥ 15 → *moderate*, ≥ 25 →
 *significant*, ≥ 35 → *severe*. Stored with both evidence rows and displayed in the matrix.
 
-## 6. Staleness
+## 6. Freshness gate
 
-Volatile facts (`default_sweep_apy_pct`, `best_cash_apy_pct`, `margin_rate_pct`) older than
-180 days: penalty `min(6, 2 × (age−180)/90)` points on the dimension score; age also drags
-the recency confidence sub-score.
+Every product fact is checked against a fact-specific SLA before scoring or display.
+Cash yields expire after 7 days, margin rates after 14 days, and common fees and IRA
+matches after 30 days; other facts use a 90-day default. Expired
+score-critical facts and facts with invalid dates are removed from the fact component and
+its evidence-confidence inputs. They remain in the audit ledger as **withheld**, with the
+last verification date and applicable SLA. No stale value receives a partial score merely
+because it exists in the database.
 
 ## 7. Confidence (0–100)
 

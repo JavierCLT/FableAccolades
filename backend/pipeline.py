@@ -40,8 +40,15 @@ def run(collect: bool = True, keep_db: bool = False) -> None:
         from backend.collectors.cfpb.collector import CfpbCollector
         from backend.collectors.expert_sites.collector import ExpertSitesCollector
         from backend.collectors.reddit.collector import RedditCollector
+        from backend.collectors.volatile_facts.collector import VolatileFactsCollector
 
-        for collector_cls in (CfpbCollector, RedditCollector, ExpertSitesCollector, BrokerSitesCollector):
+        for collector_cls in (
+            CfpbCollector,
+            RedditCollector,
+            ExpertSitesCollector,
+            VolatileFactsCollector,
+            BrokerSitesCollector,
+        ):
             collector_cls().run(conn)
 
     started = utc_now_iso()

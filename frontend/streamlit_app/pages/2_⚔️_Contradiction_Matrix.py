@@ -43,7 +43,7 @@ pivot = con.pivot_table(index="broker_name", columns="dim_name", values="gap", a
 # Stable column order: Overall first, then dimension sort order.
 dim_order = ["Overall rating"] + [d for d in data.dimensions()["name"] if d in pivot.columns]
 pivot = pivot.reindex(columns=[c for c in dim_order if c in pivot.columns])
-st.plotly_chart(contradiction_heatmap(pivot), use_container_width=True)
+st.plotly_chart(contradiction_heatmap(pivot), width="stretch")
 st.caption("Grey = publishers agree (gap < 15 points) or no overlapping coverage. Hover for exact gaps.")
 
 # ---- Detail table with evidence ----
@@ -95,5 +95,5 @@ st.dataframe(
     .rename(columns={"broker_name": "Broker", "dim_name": "Dimension",
                      "expert_component": "Experts say", "customer_component": "Customers say",
                      "expert_customer_gap": "Gap (experts − customers)"}),
-    use_container_width=True, hide_index=True,
+    width="stretch", hide_index=True,
 )

@@ -853,6 +853,58 @@
       "snippet": "Strong charts, weak fundamentals/education is the consensus framing."
     },
     {
+      "broker": "public",
+      "source": "reddit",
+      "dimension": "ease_of_use",
+      "kind": "praise",
+      "sentiment": "positive",
+      "theme": "Clean multi-asset interface is approachable",
+      "volume": 4,
+      "severity": 1,
+      "observed_date": "2026-06-30",
+      "url": "https://www.reddit.com/r/PublicApp/",
+      "snippet": "Recent Public community discussions repeatedly praise the modern interface and access to several asset types in one app."
+    },
+    {
+      "broker": "public",
+      "source": "reddit",
+      "dimension": "customer_support",
+      "kind": "complaint",
+      "sentiment": "negative",
+      "theme": "Support response quality is inconsistent",
+      "volume": 2,
+      "severity": 3,
+      "observed_date": "2026-05-11",
+      "url": "https://www.reddit.com/r/PublicApp/comments/1tabwhi/anyone_experiencing_terrible_customer_service/",
+      "snippet": "A recent customer thread describes slow priority-support responses; Public acknowledged the issue in the discussion."
+    },
+    {
+      "broker": "public",
+      "source": "reddit",
+      "dimension": "transfer_acat",
+      "kind": "complaint",
+      "sentiment": "negative",
+      "theme": "Cash availability and withdrawal holds create friction",
+      "volume": 3,
+      "severity": 3,
+      "observed_date": "2026-06-30",
+      "url": "https://www.reddit.com/r/PublicApp/",
+      "snippet": "Recent discussions identify unsettled-cash and withdrawal hold times as a recurring point of friction."
+    },
+    {
+      "broker": "public",
+      "source": "reddit",
+      "dimension": "trading_tools",
+      "kind": "opinion",
+      "sentiment": "mixed",
+      "theme": "Fast product expansion, but advanced workflows still have limitations",
+      "volume": 3,
+      "severity": 2,
+      "observed_date": "2026-06-15",
+      "url": "https://www.reddit.com/r/PublicApp/",
+      "snippet": "Users value new features while continuing to request more control over orders, plans, and account workflows."
+    },
+    {
       "broker": "ally",
       "source": "reddit",
       "dimension": "banking_integration",

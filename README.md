@@ -9,10 +9,10 @@ evidence-backed comparison engine that shows:
 - what objective product facts show (from brokers' own public pages),
 - what **actual customers** experience (Reddit, Bogleheads, Trustpilot/BBB, app stores, and
   the official **CFPB Consumer Complaint Database**),
-- which brokers fit different investor personas — with user-adjustable weights.
+- which brokers fit six plain-language investor situations, with an industry benchmark mode.
 
 **Tracked brokers (11):** Fidelity, Charles Schwab, Vanguard, Robinhood, Interactive
-Brokers, E\*TRADE, Merrill Edge, SoFi Invest, Webull, Ally Invest, and J.P. Morgan
+Brokers, E\*TRADE, Merrill Edge, SoFi Invest, Webull, Public, and J.P. Morgan
 Self-Directed Investing.
 
 > ⚖️ **Not financial advice.** Scores are evidence-based estimates from public data at
@@ -51,16 +51,10 @@ python -m pytest tests/ -q
 
 | Page | What it does |
 |---|---|
-| 🏆 Rankings by Persona | 9 personas, weighted scores + confidence + evidence counts, live weight sliders |
-| ⚔️ Contradiction Matrix | Heatmap + detail of expert-vs-expert disagreements (15+ point gaps), each with both sides' evidence; plus the biggest expert-vs-customer gaps |
-| 📋 Product Facts | Side-by-side objective facts with as-of dates and staleness flags |
-| 🗣️ Customer Voice | Per-broker sentiment, complaint/praise themes with volume & severity, CFPB complaint stats by product/issue, aggregate ratings |
-| 🏅 Accolade Tracker | Public awards by publisher/category/year (context only — not score inputs) |
-| 📈 Compare Brokers | 2–4 broker side-by-side with radar chart, per-dimension zoom, fact table |
-| 🔎 Filters | Hard screens (no ACAT fee, cash yield ≥ X, mobile rating, crypto, IRA match, …) with exclusion reasons |
-| 🔍 Evidence Viewer | The full evidence ledger: URL, publisher, retrieval date, snippet, method, confidence — every claim traces here |
-| 🕳️ Withdrawn Reviews | Tracks expert claims whose source pages went dead or silently dropped the broker — excluded from scoring, preserved for the record |
-| 📖 Methodology / ⚠️ Limitations | Full scoring spec and honest disclosure of biases and gaps |
+| Dashboard | Winner-first Investor view with six presets; Industry view benchmarks one brokerage against the market |
+| Fees & Products | Current cash, margin, fee, and product leaders; expired values are blank |
+| Compare | Focused two- or three-broker radar, score, customer voice, and economics comparison |
+| Audit trail | Sources, methodology, withdrawn reviews, and limitations remain available from the disclosure panel |
 
 Everywhere a score or claim appears, **hovering it opens a proof card** with clickable
 source links, retrieval dates, and confidence — credibility by mouseover.
@@ -69,7 +63,7 @@ source links, retrieval dates, and confidence — credibility by mouseover.
 
 Each broker × dimension score (0–100) blends **objective facts (45%) / customer voice (35%)
 / expert consensus (20%)**, renormalized when a component is missing. Expert disagreement is
-penalized (and displayed); stale volatile data is penalized; a separate **confidence score**
+penalized (and displayed); expired score-critical facts are withheld from scoring; a separate **confidence score**
 reflects evidence volume, source quality, recency, and corroboration. Persona scores are
 weighted dimension averages plus a bounded CFPB complaint-momentum adjustment. Deterministic
 end-to-end — the full spec is in [docs/scoring_logic.md](docs/scoring_logic.md) and pinned by
@@ -79,14 +73,14 @@ tests. An LLM is never required and never produces a score.
 
 ```
 backend/
-  collectors/          # cfpb (official API), reddit (PRAW), expert_sites, broker_sites
+  collectors/          # cfpb, reddit, expert_sites, broker_sites, structured volatile facts
   normalizers/         # rating normalization
   classifiers/         # deterministic sentiment + theme/dimension classifiers
   scoring/             # fact rules, confidence, contradictions, engine, constants
   database/            # schema.sql, db helpers, seed loader, seeds/*.json
   pipeline.py          # orchestrator: rebuild + collect + score
 frontend/streamlit_app/
-  app.py               # home: positioning, broker cards, data freshness
+  app.py               # home: decision dashboard, radar, rankings, current facts
   components/          # data access, evidence viewer widget, charts, layout
   pages/               # the 10 dashboard pages
 data/

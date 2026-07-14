@@ -130,13 +130,13 @@ else:
             go.Figure(go.Bar(x=prod["complaint_count"], y=prod["product"], orientation="h",
                              marker_color="#d7191c"))
             .update_layout(title="By product category", height=360, margin={"t": 40, "b": 10}),
-            use_container_width=True)
+            width="stretch")
     with g2:
         st.plotly_chart(
             go.Figure(go.Bar(x=iss["complaint_count"], y=iss["issue"], orientation="h",
                              marker_color="#fd8d3c"))
             .update_layout(title="By issue", height=360, margin={"t": 40, "b": 10}),
-            use_container_width=True)
+            width="stretch")
     st.caption(
         "Complaint counts are raw volume — larger customer bases generate more complaints. "
         "Scoring normalizes by client assets where disclosed (see Methodology). "

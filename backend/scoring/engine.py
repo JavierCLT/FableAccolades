@@ -9,8 +9,8 @@ Per broker x dimension it computes three components (0-100):
              dimension (falls back to overall ratings at reduced weight), minus a
              contradiction penalty when publishers disagree
 
-Blended with COMPONENT_WEIGHTS (renormalized over available components), then a
-staleness penalty for volatile facts. Confidence is scored separately (confidence.py).
+Blended with COMPONENT_WEIGHTS (renormalized over available components). Volatile facts
+that miss their freshness SLA are excluded before scoring. Confidence is scored separately.
 Persona scores are weight-averaged dimension scores plus a bounded CFPB momentum
 adjustment. All constants live in constants.py and are documented in docs/scoring_logic.md.
 """
@@ -23,6 +23,7 @@ from datetime import date
 
 from backend.common import get_logger, utc_now_iso
 from backend.database import db
+from backend.freshness import blocks_scoring
 from backend.scoring import constants as C
 from backend.scoring.confidence import confidence_score, recency_weight
 from backend.scoring.contradictions import (
@@ -40,11 +41,18 @@ CONFIDENCE_FACTOR = {"high": 1.0, "medium": 0.8, "low": 0.55}
 # Component computations
 # --------------------------------------------------------------------------------------
 
-def _broker_facts(conn: sqlite3.Connection, broker_id: int) -> dict[str, float | None]:
+def _broker_facts(
+    conn: sqlite3.Connection, broker_id: int, today: date | None = None
+) -> dict[str, float | None]:
     rows = conn.execute(
-        "SELECT fact_key, value_numeric FROM product_facts WHERE broker_id = ?", (broker_id,)
+        "SELECT fact_key, value_numeric, as_of_date FROM product_facts WHERE broker_id = ?",
+        (broker_id,),
     ).fetchall()
-    return {r["fact_key"]: r["value_numeric"] for r in rows}
+    return {
+        r["fact_key"]: r["value_numeric"]
+        for r in rows
+        if not blocks_scoring(r["fact_key"], r["as_of_date"], today=today)
+    }
 
 
 def _mobile_fact_component(conn: sqlite3.Connection, broker_id: int) -> tuple[float | None, list[int]]:
@@ -116,23 +124,8 @@ def blend_components(
 
 def staleness_penalty(conn: sqlite3.Connection, broker_id: int, dimension_id: int,
                       today: date | None = None) -> float:
-    """Linear penalty for volatile facts past the grace window, capped."""
-    today = today or date.today()
-    rows = conn.execute(
-        "SELECT fact_key, as_of_date FROM product_facts WHERE broker_id = ? AND dimension_id = ?",
-        (broker_id, dimension_id),
-    ).fetchall()
-    worst = 0.0
-    for r in rows:
-        if r["fact_key"] not in C.VOLATILE_FACT_KEYS:
-            continue
-        try:
-            age = (today - date.fromisoformat(r["as_of_date"][:10])).days
-        except (ValueError, TypeError):
-            age = C.STALENESS_GRACE_DAYS * 2
-        if age > C.STALENESS_GRACE_DAYS:
-            worst = max(worst, min(C.MAX_STALENESS_PENALTY, (age - C.STALENESS_GRACE_DAYS) / 90.0 * 2.0))
-    return round(worst, 2)
+    """Retained for schema compatibility; expired volatile facts are now withheld."""
+    return 0.0
 
 
 # --------------------------------------------------------------------------------------
@@ -179,7 +172,7 @@ def compute_all(conn: sqlite3.Connection) -> None:
 
     # ---- dimension scores ----
     for b in brokers:
-        facts = _broker_facts(conn, b["id"])
+        facts = _broker_facts(conn, b["id"], today)
         for d in dimensions:
             evidence_ids: set[int] = set()
             quality_weights: list[float] = []
@@ -193,11 +186,13 @@ def compute_all(conn: sqlite3.Connection) -> None:
                 fact = fact_component(d["slug"], facts)
                 if fact is not None:
                     for r in conn.execute(
-                        """SELECT pf.evidence_id, pf.as_of_date, e.confidence
+                        """SELECT pf.fact_key, pf.evidence_id, pf.as_of_date, e.confidence
                            FROM product_facts pf JOIN evidence e ON e.id = pf.evidence_id
                            WHERE pf.broker_id = ? AND pf.dimension_id = ?""",
                         (b["id"], d["id"]),
                     ).fetchall():
+                        if blocks_scoring(r["fact_key"], r["as_of_date"], today=today):
+                            continue
                         evidence_ids.add(r["evidence_id"])
                         quality_weights.append(0.95 * CONFIDENCE_FACTOR[r["confidence"]])
                         recencies.append(recency_weight(r["as_of_date"], today))

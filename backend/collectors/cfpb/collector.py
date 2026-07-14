@@ -43,11 +43,11 @@ COMPANY_MAP: dict[str, dict] = {
     "sofi": {"companies": ["SOFI TECHNOLOGIES, INC."], "attribution_caveat": True},
     # Webull's CFPB entity is its payments/crypto affiliate (tiny volume).
     "webull": {"companies": ["WEBULL PAY HOLDINGS (US) INC"], "attribution_caveat": True},
+    "public": {"companies": []},
     # Diversified parents excluded: complaints are dominated by auto lending (Ally) and
     # consumer banking (JPMorgan Chase, Bank of America/Merrill) — attributing them to the
     # brokerage product would be unfair and violate same-methodology neutrality.
     "merrill": {"companies": [], "exclusion_note": "Bank of America/Merrill complaints cannot be isolated to Merrill Edge self-directed."},
-    "ally": {"companies": [], "exclusion_note": "ALLY FINANCIAL INC. complaints are dominated by auto lending/banking and cannot be isolated to Ally Invest."},
     "jpmorgan": {"companies": [], "exclusion_note": "JPMORGAN CHASE & CO. complaints are bank-wide and cannot be isolated to Self-Directed Investing."},
 }
 

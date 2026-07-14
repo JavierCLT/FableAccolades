@@ -7,15 +7,16 @@ All sources are public. Quality weights (0–1) feed confidence scoring and are 
 
 | Source | Access | Notes |
 |---|---|---|
-| CFPB Consumer Complaint Database | **Official public API** (no key), JSON export, trailing 36 months | Company entities verified via the API's company-suggest endpoint: Robinhood (`ROBINHOOD MARKETS INC.`), Schwab (`CHARLES SCHWAB CORPORATION, THE`), E*TRADE (`E*TRADE BANK`), SoFi (`SOFI TECHNOLOGIES, INC.`, attribution caveat: spans lending/banking), Webull (`WEBULL PAY HOLDINGS (US) INC`, attribution caveat: payments affiliate). Fidelity, Vanguard, and IBKR have **no CFPB entity** — recorded explicitly as a coverage gap. Merrill (Bank of America), Ally Invest (Ally Financial), and J.P. Morgan Self-Directed (JPMorgan Chase) are **deliberately excluded**: their parents' complaint streams are dominated by unrelated business lines and cannot be fairly attributed to the brokerage product. Attribution-caveat entities are shown for context but never move friction/momentum scores. |
+| CFPB Consumer Complaint Database | **Official public API** (no key), JSON export, trailing 36 months | Company entities verified via the API's company-suggest endpoint: Robinhood (`ROBINHOOD MARKETS INC.`), Schwab (`CHARLES SCHWAB CORPORATION, THE`), E*TRADE (`E*TRADE BANK`), SoFi (`SOFI TECHNOLOGIES, INC.`, attribution caveat: spans lending/banking), Webull (`WEBULL PAY HOLDINGS (US) INC`, attribution caveat: payments affiliate). Fidelity, Vanguard, IBKR, and Public have **no CFPB entity** — recorded explicitly as a coverage gap. Merrill (Bank of America) and J.P. Morgan Self-Directed (JPMorgan Chase) are **deliberately excluded**: their parents' complaint streams are dominated by unrelated business lines and cannot be fairly attributed to the brokerage product. Attribution-caveat entities are shown for context but never move friction/momentum scores. |
 
 ## Broker official pages (objective facts)
 
-Pricing pages, fee schedules, cash/sweep pages, and feature pages for Fidelity, Charles
-Schwab, Vanguard, Robinhood, Interactive Brokers, and E*TRADE. Facts are curated from these
-pages with URLs and as-of dates; the `broker_sites` collector archives timestamped page
-snapshots under `data/raw/broker_sites/` for auditability. Marketing claims are excluded —
-only checkable product facts are recorded.
+Pricing pages, fee schedules, cash/sweep pages, and feature pages for the eleven tracked
+brokers. Facts carry URLs and source as-of dates. Structured adapters parse supported
+official documents (currently including Merrill's published cash-rate sheet), record every
+verification and detected value change, and archive the original payload. The `broker_sites`
+collector also archives timestamped page snapshots under `data/raw/broker_sites/` for
+auditability. Marketing claims are excluded — only checkable product facts are recorded.
 
 ## Expert review publishers
 
@@ -51,7 +52,8 @@ chromium`) — kept out of the default path deliberately.
 
 ## Update cadence
 
-GitHub Actions (`.github/workflows/update_data.yml`) runs the pipeline on a schedule:
-CFPB and expert-page verification refresh with each run; volatile facts (yields, margin
-rates) are flagged for manual re-curation when the staleness penalty engages. Raw payloads
-are versioned by timestamp under `data/raw/`.
+GitHub Actions (`.github/workflows/update_data.yml`) runs the pipeline daily. CFPB,
+expert-page verification, structured fact adapters, and source archiving run on each pass.
+The build then enforces at least 95% current product-fact coverage and zero expired
+score-critical facts. A failed freshness gate is visible in CI, while the database and raw
+artifacts are still uploaded for diagnosis. Raw payloads are versioned under `data/raw/`.
