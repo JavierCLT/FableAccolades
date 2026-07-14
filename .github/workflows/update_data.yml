@@ -1,0 +1,44 @@
+name: Scheduled data update
+
+on:
+  schedule:
+    - cron: "17 6 * * *" # daily: volatile facts expire quickly and must be re-verified
+  workflow_dispatch: {}
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m pytest tests/ -q
+
+      - name: Run pipeline (live collectors)
+        env:
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+        run: python -m backend.pipeline
+
+      - name: Enforce product-fact freshness SLA
+        run: python -m backend.freshness_check --min-coverage 95 --max-blocking-stale 0
+
+      - name: Upload database + logs as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: broker-index-db
+          path: |
+            data/processed/broker_index.db
+            data/raw/broker_sites/
+            logs/pipeline.log
+          retention-days: 30

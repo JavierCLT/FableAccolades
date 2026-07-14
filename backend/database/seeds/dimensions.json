@@ -1,0 +1,20 @@
+{
+  "dimensions": [
+    {"slug": "costs_fees", "name": "Costs & Fees", "description": "Commissions, contract fees, account fees, margin rates and overall trading economics.", "sort_order": 1},
+    {"slug": "cash_yield", "name": "Cash Yield & Cash Management", "description": "Default sweep yield, money market options, and how hard the broker makes you work for yield on idle cash.", "sort_order": 2},
+    {"slug": "ease_of_use", "name": "Ease of Use & Platform Experience", "description": "Onboarding, navigation, and overall friction of the web/desktop experience.", "sort_order": 3},
+    {"slug": "mobile_app", "name": "Mobile App Quality", "description": "Mobile app functionality, stability, and public app-store reception.", "sort_order": 4},
+    {"slug": "research_education", "name": "Research & Education Tools", "description": "Screeners, third-party research, market data, and investor education content.", "sort_order": 5},
+    {"slug": "retirement_rollover", "name": "Retirement & Rollover Experience", "description": "IRA account options, rollover process quality, IRA match programs, and retirement planning tools.", "sort_order": 6},
+    {"slug": "trading_tools", "name": "Trading Tools & Features", "description": "Order types, desktop platforms, options/futures tooling, and advanced trading capability.", "sort_order": 7},
+    {"slug": "product_breadth", "name": "Investment Product Breadth", "description": "Stocks, ETFs, mutual funds, bonds/CDs, options, futures, crypto, and international market access.", "sort_order": 8},
+    {"slug": "customer_support", "name": "Customer Support Quality", "description": "Support hours and channels, branch access, and observed service quality from public customer voice.", "sort_order": 9},
+    {"slug": "transfer_acat", "name": "Transfer / ACAT Process & Fees", "description": "Outgoing ACAT fees and reported transfer friction.", "sort_order": 10},
+    {"slug": "banking_integration", "name": "Banking Integration", "description": "Checking/debit features, ATM access, bill pay, and cash-movement convenience.", "sort_order": 11},
+    {"slug": "advisory_options", "name": "Advisory / Managed Options", "description": "Robo-advisor availability and cost, and access to human advice.", "sort_order": 12},
+    {"slug": "reliability", "name": "Platform Reliability & Outages", "description": "Public record of outages and reported platform stability.", "sort_order": 13},
+    {"slug": "security", "name": "Security Features", "description": "2FA options, guarantees against unauthorized activity, and reported account-security friction.", "sort_order": 14},
+    {"slug": "tax_reporting", "name": "Tax Reporting & Cost Basis Tools", "description": "Tax-lot selection methods, tax forms experience, and cost-basis tooling.", "sort_order": 15},
+    {"slug": "fractional_shares", "name": "Fractional Shares Support", "description": "Availability and breadth of fractional-share investing.", "sort_order": 16}
+  ]
+}

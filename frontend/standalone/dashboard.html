@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Best Broker Index</title>
+  <style>
+    :root {
+      --ink:#18211e;--muted:#5f6d67;--line:#d8e1dc;--canvas:#f4f7f5;
+      --surface:#fff;--green:#08785e;--green-dark:#075744;--blue:#1556a0;
+      --amber:#a96508;--red:#ad2e3e;--shadow:0 8px 26px rgba(18,32,27,.07)
+    }
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
+    body{margin:0;background:var(--canvas);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:0}
+    button,select{font:inherit} button{cursor:pointer}
+    .shell{max-width:1280px;margin:0 auto;padding:24px 24px 54px}
+    .topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:10px 12px;margin-bottom:28px;background:rgba(255,255,255,.96);border:1px solid var(--line);border-left:4px solid var(--blue);box-shadow:0 4px 14px rgba(18,32,27,.05)}
+    .brand{display:flex;align-items:center;gap:10px;min-width:210px;font-weight:780}.brand-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:5px;background:var(--green);color:#fff;font-size:12px}
+    .primary-nav{display:flex;gap:8px;align-items:center}.nav-button{min-height:42px;padding:0 15px;border:1px solid #b9c9c2;border-radius:6px;background:#f8faf9;color:var(--ink);font-weight:700}.nav-button:hover{border-color:#71867d}.nav-button.active{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 3px 8px rgba(21,86,160,.2)}
+    .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:14px}.kicker,.panel-label,.eyebrow{color:var(--green);font-size:11px;font-weight:800;text-transform:uppercase}.page-head h1{font-size:34px;line-height:1.1;margin:7px 0 0}.status{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.status span{padding:7px 9px;border:1px solid var(--line);background:#f9fbfa;border-radius:4px;color:var(--muted);font-size:12px}.status b{color:var(--ink)}
+    .controls{display:flex;align-items:end;gap:16px;flex-wrap:wrap;margin:14px 0 18px}.control{min-width:220px}.control label{display:block;margin:0 0 6px;color:var(--muted);font-size:12px;font-weight:700}.control select{width:100%;min-height:42px;padding:0 38px 0 12px;border:1px solid #b9c9c2;border-radius:6px;background:#fff;color:var(--ink)}
+    .segmented{display:inline-flex;padding:4px;border:1px solid #9eb6aa;border-radius:7px;background:#eef3f0}.segmented button{min-height:38px;padding:0 18px;border:0;border-radius:4px;background:transparent;color:#2d4038;font-weight:750}.segmented button.active{background:var(--blue);color:#fff;box-shadow:0 2px 6px rgba(21,86,160,.18)}
+    .winner-band{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:24px 20px;border-top:3px solid var(--blue);background:var(--surface);box-shadow:var(--shadow)}.winner-band .label{color:var(--green);font-size:11px;font-weight:800;text-transform:uppercase}.winner-band h2{margin:8px 0 5px;font-size:29px}.winner-band p{margin:0;color:var(--muted);line-height:1.5}.winner-score{text-align:right;min-width:150px}.winner-score strong{display:block;font-size:40px;line-height:1}.winner-score small{display:block;margin-top:7px;color:var(--muted)}
+    .verdict-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-top:0;background:#fff}.verdict{padding:14px 16px;border-right:1px solid var(--line)}.verdict:last-child{border-right:0}.verdict span{display:block;margin-bottom:6px;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase}.verdict strong{font-size:13px}.verdict.risk strong{color:#8f3d2f}
+    .section-title{margin:28px 0 10px}.section-title span,.panel-title span{display:block;color:var(--green);font-size:10px;font-weight:800;text-transform:uppercase}.section-title strong,.panel-title strong{display:block;margin-top:5px;font-size:15px}.chart-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px}.leader-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.panel{min-width:0}.panel-title{min-height:48px;padding:0 2px 9px}.chart{position:relative;width:100%;height:390px;border:1px solid var(--line);background:#fff;border-radius:6px;overflow:visible}.chart:hover{z-index:20}.chart .main-svg{overflow:visible!important}.chart.compact{height:245px}.chart.reviews{height:430px}
+    .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}.kpi{padding:16px;border:1px solid var(--line);border-top:3px solid #789087;background:#fff}.kpi.primary{border-top-color:var(--green)}.kpi span{display:block;color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase}.kpi strong{display:block;margin:8px 0 5px;font-size:18px}.kpi small{color:var(--muted);line-height:1.35}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:6px;background:#fff}.data-table{width:100%;min-width:720px;border-collapse:collapse}.data-table th,.data-table td{padding:10px 12px;border-bottom:1px solid #e6ece8;text-align:left;font-size:12px}.data-table th{position:sticky;top:0;background:#f7faf8;color:var(--muted);font-size:10px;text-transform:uppercase}.data-table td:first-child{font-weight:750}.best{color:var(--green-dark);font-weight:800}.missing{color:#9aa6a1}.source-link{color:inherit;text-decoration:none;border-bottom:1px dotted #95a69e}
+    .compare-controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0 18px}.note{padding:11px 13px;border-left:3px solid var(--amber);background:#fff8ea;color:#684c22;font-size:12px;line-height:1.45}.caption{margin:10px 2px;color:var(--muted);font-size:11px;line-height:1.5}.footer{display:flex;justify-content:space-between;gap:20px;margin-top:36px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:11px;line-height:1.5}.methodology{margin-top:18px;border:1px solid var(--line);background:#fff}.methodology summary{padding:13px 15px;cursor:pointer;font-weight:750}.methodology p{padding:0 15px 15px;margin:0;color:var(--muted);font-size:12px;line-height:1.55}
+    .research-nav{display:flex;gap:6px;overflow-x:auto;padding:4px;margin:14px 0 18px;border-bottom:1px solid var(--line)}.research-nav button{flex:0 0 auto;padding:10px 13px;border:0;border-bottom:3px solid transparent;background:transparent;color:var(--muted);font-weight:750}.research-nav button.active{border-bottom-color:var(--blue);color:var(--ink)}
+    .filter-grid{display:grid;grid-template-columns:2fr repeat(4,1fr);gap:8px;margin:12px 0}.filter-grid input,.filter-grid select,.cost-controls input,.cost-controls select{width:100%;min-height:42px;padding:0 10px;border:1px solid #b9c9c2;border-radius:6px;background:#fff}.filter-actions{display:flex;align-items:end;gap:8px}.action-button{min-height:42px;padding:0 15px;border:1px solid var(--blue);border-radius:6px;background:var(--blue);color:#fff;font-weight:750}.action-button.secondary{border-color:#9eb0a8;background:#fff;color:var(--ink)}
+    .audit-kpis{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);background:#fff}.audit-kpi{padding:13px 15px;border-right:1px solid var(--line)}.audit-kpi:last-child{border-right:0}.audit-kpi span{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase}.audit-kpi strong{display:block;margin-top:5px;font-size:21px}
+    .evidence-list{border:1px solid var(--line);background:#fff}.evidence-row{padding:13px 15px;border-bottom:1px solid #e6ece8}.evidence-row:last-child{border-bottom:0}.evidence-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.evidence-title{font-weight:750}.evidence-title a{color:var(--blue)}.evidence-meta{margin-top:5px;color:var(--muted);font-size:11px}.evidence-row details{margin-top:8px}.evidence-row summary{cursor:pointer;color:var(--blue);font-size:11px;font-weight:750}.evidence-detail{padding-top:8px;color:#33423c;font-size:12px;line-height:1.5}.evidence-detail blockquote{margin:7px 0;padding:8px 11px;border-left:3px solid #9db1a9;background:#f7faf8}.status-chip{display:inline-block;padding:3px 6px;border-radius:3px;background:#edf3f0;color:#385148;font-size:10px;font-weight:800;text-transform:uppercase}.status-chip.low,.status-chip.unavailable,.status-chip.stale{background:#fff0ed;color:#914334}.status-chip.medium,.status-chip.unverified{background:#fff7e5;color:#76551d}.status-chip.high,.status-chip.success,.status-chip.updated{background:#e6f5ef;color:#08664f}
+    .pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0}.pagination button{min-height:38px;padding:0 13px;border:1px solid #9eb0a8;border-radius:5px;background:#fff;font-weight:700}.pagination button:disabled{opacity:.4;cursor:default}
+    .document{max-width:940px;padding:22px 25px;border:1px solid var(--line);background:#fff;line-height:1.6}.document h1{font-size:27px}.document h2{margin-top:28px;font-size:20px}.document h3{font-size:16px}.document code{padding:2px 4px;background:#eef3f0;border-radius:3px}.document pre{overflow:auto;padding:13px;background:#17231f;color:#eef6f2}.document table{width:100%;border-collapse:collapse}.document th,.document td{padding:8px;border:1px solid var(--line);text-align:left;font-size:12px}.document blockquote{margin-left:0;padding-left:14px;border-left:3px solid var(--green);color:var(--muted)}
+    .cost-intro{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);background:#fff}.cost-step{display:grid;grid-template-columns:32px 1fr;gap:10px;padding:15px;border-right:1px solid var(--line)}.cost-step:last-child{border-right:0}.cost-step b{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#e8f1fb;color:var(--blue);font-size:12px}.cost-step strong{display:block;font-size:13px}.cost-step small{display:block;margin-top:4px;color:var(--muted);font-size:11px;line-height:1.4}.cost-form-shell{margin-top:14px;border:1px solid var(--line);background:#fff}.cost-form-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border-bottom:1px solid var(--line)}.cost-form-head strong{font-size:15px}.cost-presets{display:flex;gap:5px;overflow-x:auto}.cost-presets button{flex:0 0 auto;min-height:34px;padding:0 12px;border:1px solid #9eb0a8;border-radius:5px;background:#fff;font-size:12px;font-weight:700}.cost-presets button.active{border-color:var(--blue);background:var(--blue);color:#fff}.cost-controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px}.cost-control label{display:block;margin-bottom:6px;color:var(--ink);font-size:11px;font-weight:750}.cost-control small{display:block;margin-top:5px;color:var(--muted);font-size:10px;line-height:1.35}.cost-control input,.cost-control select{width:100%;min-height:42px;padding:0 10px;border:1px solid #b9c9c2;border-radius:6px;background:#fff}.cost-advanced{grid-column:1/-1;border-top:1px solid var(--line)}.cost-advanced summary{padding:12px 0 2px;cursor:pointer;color:var(--blue);font-size:12px;font-weight:750}.cost-advanced-grid{display:grid;grid-template-columns:repeat(2,minmax(0,280px));gap:12px;padding-top:10px}.benefit-toggle{grid-column:1/-1;display:flex;align-items:flex-start;gap:10px;padding:13px;border:1px solid #b7cec4;background:#f3faf7}.benefit-toggle input,.check-row input{width:17px;height:17px;margin:1px 0 0;accent-color:var(--green)}.benefit-toggle strong{display:block;font-size:13px}.benefit-toggle small{display:block;margin-top:3px;color:var(--muted);font-size:11px;line-height:1.4}.benefit-inputs{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:14px;border-left:3px solid var(--green);background:#f7fbf9}.check-row{display:flex;align-items:flex-start;gap:8px;padding-top:22px;color:var(--ink);font-size:11px;font-weight:700;line-height:1.4}.cost-submit{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px}.cost-submit span{color:var(--muted);font-size:11px}.cost-formula{margin:14px 0;padding:13px 15px;border-left:4px solid var(--blue);background:#eef5fc;color:#2f465d;font-size:12px;line-height:1.5}.cost-formula strong{color:var(--ink)}.result-callout{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px;border:1px solid var(--line);border-top:3px solid var(--green);background:#fff}.result-callout h2{margin:4px 0 5px;font-size:24px}.result-callout p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}.result-number{text-align:right;white-space:nowrap}.result-number strong{display:block;font-size:30px}.result-number small{color:var(--muted)}.cost-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:14px}.net-benefit{color:var(--green-dark);font-weight:800}.net-cost{color:#8f3d2f;font-weight:800}.benefit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.benefit-card{padding:14px;border:1px solid var(--line);border-top:3px solid #8ba097;background:#fff}.benefit-card.counted{border-top-color:var(--green)}.benefit-card span{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase}.benefit-card strong{display:block;margin:7px 0 5px;font-size:14px}.benefit-card p{min-height:48px;margin:0 0 9px;color:var(--muted);font-size:11px;line-height:1.45}.benefit-card a{color:var(--blue);font-size:10px;font-weight:750}.coverage-gap{padding:16px;border:1px solid #e3c785;border-left:4px solid var(--amber);background:#fff9eb}.coverage-gap strong{display:block;margin-bottom:6px}.coverage-gap p{margin:0;color:#6e5529;font-size:12px;line-height:1.5}
+    @media(max-width:900px){.shell{padding:12px 12px 40px}.topbar{position:static;align-items:flex-start;flex-direction:column}.brand{min-width:0}.primary-nav{width:100%;justify-content:flex-start;overflow-x:auto}.nav-button{padding:0 10px;flex:0 0 auto}.page-head{align-items:flex-start;flex-direction:column}.status{justify-content:flex-start}.chart-grid,.leader-grid,.cost-grid{grid-template-columns:1fr}.kpi-grid,.audit-kpis{grid-template-columns:repeat(2,1fr)}.audit-kpi:nth-child(2){border-right:0}.compare-controls,.cost-controls,.benefit-inputs{grid-template-columns:repeat(2,1fr)}.benefit-grid{grid-template-columns:repeat(2,1fr)}.filter-grid{grid-template-columns:1fr 1fr}.chart{height:420px}}
+    @media(max-width:620px){.topbar{gap:10px}.primary-nav{justify-content:flex-start}.nav-button{font-size:12px}.page-head h1{font-size:27px}.winner-band,.result-callout{align-items:flex-start;flex-direction:column}.winner-score,.result-number{text-align:left}.verdict-grid,.kpi-grid,.compare-controls,.cost-controls,.benefit-inputs,.benefit-grid,.audit-kpis,.filter-grid,.cost-intro{grid-template-columns:1fr}.cost-step{border-right:0;border-bottom:1px solid var(--line)}.cost-step:last-child{border-bottom:0}.cost-form-head{align-items:flex-start;flex-direction:column}.cost-advanced-grid{grid-template-columns:1fr}.cost-submit{align-items:flex-start;flex-direction:column}.verdict,.audit-kpi{border-right:0;border-bottom:1px solid var(--line)}.verdict:last-child,.audit-kpi:last-child{border-bottom:0}.control{width:100%}.segmented{width:100%}.segmented button{flex:1}.footer{flex-direction:column}.chart{height:390px}.document{padding:15px}}
+  </style>
+  <script>/*__PLOTLY_BUNDLE__*/</script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">BBI</span><span>Best Broker Index</span></div>
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <button class="nav-button" data-page="dashboard">Dashboard</button>
+        <button class="nav-button" data-page="fees">Fees &amp; Products</button>
+        <button class="nav-button" data-page="compare">Compare</button>
+        <button class="nav-button" data-page="cost">Cost Lab</button>
+        <button class="nav-button" data-page="research">Research</button>
+      </nav>
+    </header>
+    <main id="app"></main>
+    <details class="methodology">
+      <summary>Sources, methodology and disclosures</summary>
+      <p>Scores combine current objective facts, customer-voice evidence and attributable expert assessments across 16 dimensions. Persona weights determine the overall fit score. Confidence and evidence counts indicate coverage; facts outside their verification window are excluded. App-store and Trustpilot ratings are contextual and are not treated as a representative customer census.</p>
+    </details>
+    <footer class="footer"><span>Independent research from public data. Scores are estimates, not financial advice. Verify current terms with the broker before moving money.</span><span id="generated-date"></span></footer>
+  </div>
+  <script>
+    const DATA = /*__DASHBOARD_DATA__*/;
+    const app = document.getElementById('app');
+    const state = {page:'dashboard',audience:'Investor',profile:'All-Around',industryBroker:'merrill',compare:['fidelity','schwab',''],compareProfile:'All-Around',researchTab:'Evidence',documentTab:'methodology',evidencePage:1,evidenceFilters:{search:'',broker:'',sourceType:'',method:'',confidence:'',status:''},cost:{preset:'Buy & hold',cash:25000,stockTrades:12,optionContracts:0,margin:0,includeTransfer:true,horizon:5,includeBenefits:false,annualCardSpend:30000,baselineRewards:2,relationshipAssets:100000,bofaBaseRewards:1.5,useSubscriptionCredits:true}};
+    const bySlug = Object.fromEntries(DATA.brokers.map(b=>[b.slug,b]));
+    const dimensions = [...DATA.dimensions].sort((a,b)=>a.sort_order-b.sort_order);
+    const dimBySlug = Object.fromEntries(dimensions.map(d=>[d.slug,d]));
+    const momentum = Object.fromEntries(DATA.momentum.map(row=>[row.broker_slug,Number(row.momentum||0)]));
+    const PLOT_CONFIG = {responsive:true,displaylogo:false,scrollZoom:false,modeBarButtonsToRemove:['lasso2d','select2d']};
+    const FONT = {family:'Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',color:'#18211e',size:11};
+
+    const esc = value => String(value ?? '').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+    const n = value => Number(value ?? 0);
+    const fmt = (value,digits=1) => Number(value).toFixed(digits);
+    const hoverWrap = (value,width=46) => {
+      const words=String(value??'').trim().split(/\s+/); const lines=[]; let line='';
+      for(const word of words){
+        if(line && `${line} ${word}`.length>width){lines.push(line);line=word}else line=line?`${line} ${word}`:word;
+      }
+      if(line)lines.push(line); return lines.map(esc).join('<br>');
+    };
+    const brokerName = slug => bySlug[slug]?.name || slug;
+    const color = slug => DATA.brokerColors[slug] || '#687972';
+    const scoreRows = slug => DATA.dimensionScores.filter(row=>row.broker_slug===slug);
+    const scoreMap = slug => Object.fromEntries(scoreRows(slug).map(row=>[row.dim_slug,row]));
+    const profileWeights = label => DATA.personaWeights[DATA.profilePresets[label]] || {};
+    const median = values => {const v=[...values].sort((a,b)=>a-b);return v.length?v[Math.floor(v.length/2)]:0};
+
+    function weightedRankings(profileLabel){
+      const weights=profileWeights(profileLabel);
+      return DATA.brokers.map(broker=>{
+        let numerator=0,confidence=0,denominator=0,evidence=0;
+        for(const row of scoreRows(broker.slug)){
+          const weight=n(weights[row.dim_slug]); if(weight<=0) continue;
+          numerator+=n(row.score)*weight; confidence+=n(row.confidence)*weight; denominator+=weight; evidence+=n(row.evidence_count);
+        }
+        const score=Math.max(0,Math.min(100,(denominator?numerator/denominator:0)+n(momentum[broker.slug])));
+        return {broker_slug:broker.slug,broker_name:broker.name,score,confidence:denominator?confidence/denominator:0,evidence_count:evidence};
+      }).sort((a,b)=>b.score-a.score).map((row,index)=>({...row,rank:index+1}));
+    }
+
+    function brokerEdges(slug,weights){
+      const medians=Object.fromEntries(dimensions.map(dim=>[dim.slug,median(DATA.dimensionScores.filter(row=>row.dim_slug===dim.slug).map(row=>n(row.score)))]));
+      const rows=scoreRows(slug).map(row=>({slug:row.dim_slug,name:row.dim_name,score:n(row.score),weight:n(weights[row.dim_slug]),edge:(n(row.score)-n(medians[row.dim_slug]))*n(weights[row.dim_slug])})).sort((a,b)=>b.edge-a.edge);
+      return {strengths:(rows.filter(row=>row.edge>0).slice(0,2).length?rows.filter(row=>row.edge>0).slice(0,2):rows.slice(0,2)),risk:[...rows].sort((a,b)=>a.edge-b.edge)[0]};
+    }
+
+    function nearestCompetitors(slug,limit=2){
+      const selected=scoreMap(slug); const distances=[];
+      for(const broker of DATA.brokers){
+        if(broker.slug===slug) continue; const other=scoreMap(broker.slug); const diffs=[];
+        for(const dim of dimensions) if(selected[dim.slug]&&other[dim.slug]) diffs.push(Math.abs(n(selected[dim.slug].score)-n(other[dim.slug].score)));
+        if(diffs.length) distances.push({slug:broker.slug,distance:diffs.reduce((a,b)=>a+b,0)/diffs.length});
+      }
+      return distances.sort((a,b)=>a.distance-b.distance).slice(0,limit).map(row=>row.slug);
+    }
+
+    function topDimensions(weights,limit=8){
+      const selected=Object.entries(weights).sort((a,b)=>b[1]-a[1]).slice(0,limit).map(([slug])=>slug);
+      return dimensions.filter(dim=>selected.includes(dim.slug)).map(dim=>dim.slug);
+    }
+
+    function dimensionHover(row){
+      return [hoverWrap(row.dim_description||''),hoverWrap(DATA.dimensionBasis[row.dim_slug]||'See the published methodology.'),n(row.confidence),n(row.evidence_count)];
+    }
+
+    function plot(id,traces,layout){
+      const suppliedHover=layout.hoverlabel||{};
+      const finalLayout={font:FONT,paper_bgcolor:'#fff',plot_bgcolor:'#fff',margin:{t:18,b:45,l:18,r:24},...layout,hoverlabel:{align:'left',bgcolor:'#fff',bordercolor:'#71867d',font:{family:FONT.family,color:'#18211e',size:11},...suppliedHover}};
+      return Plotly.newPlot(id,traces,finalLayout,PLOT_CONFIG);
+    }
+
+    function rankingChart(id,rows,limit=5){
+      const view=rows.slice(0,limit).sort((a,b)=>a.score-b.score);
+      plot(id,[{type:'bar',orientation:'h',x:view.map(r=>r.score),y:view.map(r=>r.broker_name),marker:{color:view.map(r=>color(r.broker_slug))},text:view.map(r=>fmt(r.score)),textposition:'outside',customdata:view.map(r=>[r.confidence,r.evidence_count]),hovertemplate:'<b>%{y}</b><br>Fit %{x:.1f}/100<br>Confidence %{customdata[0]:.0f}<br>%{customdata[1]} linked evidence items<extra></extra>'}],{xaxis:{range:[0,104],title:'Fit score',gridcolor:'#e6ece8'},yaxis:{automargin:true},showlegend:false});
+    }
+
+    function compactChart(id,rows,suffix=''){
+      const view=rows.slice(0,5).sort((a,b)=>n(a.score)-n(b.score)); const max=Math.max(100,...view.map(r=>n(r.score)*1.14));
+      plot(id,[{type:'bar',orientation:'h',x:view.map(r=>n(r.score)),y:view.map(r=>r.broker_name),marker:{color:view.map(r=>color(r.broker_slug))},text:view.map(r=>fmt(r.score)+suffix),textposition:'outside',hovertemplate:`<b>%{y}</b><br>%{x:.2f}${suffix}<extra></extra>`}],{height:245,xaxis:{range:[0,max],visible:false,fixedrange:true},yaxis:{automargin:true,fixedrange:true},margin:{t:8,b:8,l:8,r:44},showlegend:false});
+    }
+
+    function radarChart(id,slugs,dimSlugs){
+      const selectedDims=dimensions.filter(dim=>dimSlugs.includes(dim.slug)); const traces=[];
+      for(const slug of slugs){
+        const map=scoreMap(slug); const rows=selectedDims.map(dim=>map[dim.slug]).filter(Boolean); if(!rows.length) continue;
+        traces.push({type:'scatterpolar',mode:'lines+markers',r:[...rows.map(r=>n(r.score)),n(rows[0].score)],theta:[...rows.map(r=>r.dim_name),rows[0].dim_name],customdata:[...rows.map(dimensionHover),dimensionHover(rows[0])],name:brokerName(slug),line:{color:color(slug),width:3},marker:{color:color(slug),size:7,line:{color:'#fff',width:1}},fill:'toself',fillcolor:hexAlpha(color(slug),.13),hovertemplate:'<b>%{theta}</b><br>%{customdata[0]}<br><br><b>How it is measured</b><br>%{customdata[1]}<br><br><b>Score</b> %{r:.0f}/100<br>Confidence %{customdata[2]:.0f}/100 - %{customdata[3]} evidence items<extra>%{fullData.name}</extra>'});
+      }
+      traces.push({type:'scatterpolar',mode:'text+markers',r:selectedDims.map(()=>124),theta:selectedDims.map(d=>d.name),text:selectedDims.map(d=>d.name),textfont:{size:10,color:'#34433d'},marker:{size:selectedDims.map(d=>Math.min(180,Math.max(100,d.name.length*6))),color:'rgba(255,255,255,.01)',line:{width:0}},customdata:selectedDims.map(d=>[hoverWrap(d.description||''),hoverWrap(DATA.dimensionBasis[d.slug]||'See the published methodology.')]),hovertemplate:'<b>%{text}</b><br>%{customdata[0]}<br><br><b>How it is measured</b><br>%{customdata[1]}<extra></extra>',showlegend:false});
+      plot(id,traces,{polar:{radialaxis:{range:[0,136],tickvals:[25,50,75,100],gridcolor:'#dfe7e3',tickfont:{size:9,color:'#74827c'}},angularaxis:{showticklabels:false,gridcolor:'#e5ebe8'}},legend:{orientation:'h',y:-.08,x:0},margin:{t:24,b:46,l:54,r:54},hoverlabel:{align:'left',bgcolor:'#fff'}});
+    }
+
+    function hexAlpha(hex,alpha){const v=hex.replace('#','');const parts=[0,2,4].map(i=>parseInt(v.slice(i,i+2),16));return `rgba(${parts[0]},${parts[1]},${parts[2]},${alpha})`}
+
+    function gapChart(id,slug){
+      const leaders={}; for(const dim of dimensions){const rows=DATA.dimensionScores.filter(r=>r.dim_slug===dim.slug).sort((a,b)=>n(b.score)-n(a.score));leaders[dim.slug]=rows[0]}
+      const selected=scoreRows(slug).map(row=>({...row,leader:leaders[row.dim_slug],gap:n(row.score)-n(leaders[row.dim_slug]?.score)})).sort((a,b)=>a.gap-b.gap).slice(0,8).sort((a,b)=>b.gap-a.gap);
+      const custom=selected.map(row=>[...dimensionHover(row),n(row.score),row.leader?.broker_name||'',n(row.leader?.score)]);
+      plot(id,[
+        {type:'bar',orientation:'h',x:selected.map(r=>r.gap),y:selected.map(r=>r.dim_name),xaxis:'x2',marker:{color:selected.map(r=>r.gap>=-3?'#178465':'#c8644b')},text:selected.map(r=>r.gap>=-.05?'Leader':fmt(r.gap,0)),textposition:'auto',customdata:custom,hovertemplate:'<b>%{y}</b><br>%{customdata[0]}<br><br><b>How it is measured</b><br>%{customdata[1]}<br><br><b>Selected score</b> %{customdata[4]:.0f}/100<br><b>Category leader</b> %{customdata[5]} - %{customdata[6]:.0f}/100<br><b>Gap</b> %{x:.1f} points<br>Confidence %{customdata[2]:.0f}/100 - %{customdata[3]} evidence items<extra></extra>'},
+        {type:'scatter',mode:'text+markers',x:selected.map(()=>.5),y:selected.map(r=>r.dim_name),text:selected.map(r=>r.dim_name),textfont:{size:11,color:'#53625c'},marker:{symbol:'square',size:selected.map(r=>Math.min(230,Math.max(120,r.dim_name.length*7))),color:'rgba(255,255,255,.01)',line:{width:0}},customdata:selected.map(r=>[hoverWrap(r.dim_description||''),hoverWrap(DATA.dimensionBasis[r.dim_slug]||'See the published methodology.')]),hovertemplate:'<b>%{text}</b><br>%{customdata[0]}<br><br><b>How it is measured</b><br>%{customdata[1]}<extra></extra>',showlegend:false}
+      ],{xaxis:{domain:[0,.29],range:[0,1],visible:false,fixedrange:true},xaxis2:{domain:[.31,1],range:[-65,3],title:'Points behind category leader',gridcolor:'#e5ebe8',anchor:'y',fixedrange:true},yaxis:{showticklabels:false,range:[-.5,Math.max(.5,selected.length-.5)],fixedrange:true},showlegend:false,hoverlabel:{align:'left',bgcolor:'#fff'},margin:{t:10,b:45,l:15,r:20}});
+    }
+
+    function reviewHeatmap(id){
+      const sources=['apple_app_store','google_play','trustpilot']; const labels=['Apple App Store','Google Play','Trustpilot']; const brokers=DATA.brokers.map(b=>b.name).sort();
+      const cell=(broker,source)=>DATA.reviewRatings.find(r=>r.broker_name===broker&&r.source_slug===source);
+      const z=brokers.map(b=>sources.map(s=>cell(b,s)?.rating_raw??null)); const text=z.map(row=>row.map(v=>v==null?'':fmt(v)));
+      const custom=brokers.map(b=>sources.map(s=>{const r=cell(b,s);return [r?.review_count||0,r?.as_of_date||'Not available',hoverWrap(r?.source_notes||'')]}));
+      plot(id,[{type:'heatmap',z,x:labels,y:brokers,zmin:1,zmax:5,colorscale:[[0,'#bd594b'],[.47,'#e7bf59'],[1,'#138568']],text,texttemplate:'%{text}',customdata:custom,hoverongaps:false,colorbar:{title:'/5',thickness:10,len:.72},hovertemplate:'<b>%{y}</b><br>%{x}: %{z:.1f}/5<br>%{customdata[0]:,} public ratings<br>As of %{customdata[1]}<br><br>%{customdata[2]}<extra></extra>'}],{xaxis:{side:'top',fixedrange:true},yaxis:{autorange:'reversed',automargin:true,fixedrange:true},margin:{t:48,b:18,l:15,r:18},hoverlabel:{align:'left',bgcolor:'#fff'}});
+    }
+
+    function sentimentChart(id){
+      const view=[...DATA.sentiment].sort((a,b)=>n(a.net)-n(b.net));
+      plot(id,[
+        {type:'bar',orientation:'h',name:'Negative',x:view.map(r=>-n(r.negative_share)),y:view.map(r=>r.broker_name),marker:{color:'#c45f4b'},text:view.map(r=>n(r.negative_share)>=12?`${fmt(r.negative_share,0)}%`:''),textposition:'inside',customdata:view.map(r=>[r.negative,r.mixed,r.evidence_count]),hovertemplate:'<b>%{y}</b><br>Negative: %{customdata[0]:,.0f} approximate mentions<br>Mixed: %{customdata[1]:,.0f}<br>%{customdata[2]:,.0f} linked theme records<extra></extra>'},
+        {type:'bar',orientation:'h',name:'Positive',x:view.map(r=>n(r.positive_share)),y:view.map(r=>r.broker_name),marker:{color:'#138568'},text:view.map(r=>n(r.positive_share)>=12?`${fmt(r.positive_share,0)}%`:''),textposition:'inside',customdata:view.map(r=>[r.positive,r.mixed,r.evidence_count]),hovertemplate:'<b>%{y}</b><br>Positive: %{customdata[0]:,.0f} approximate mentions<br>Mixed: %{customdata[1]:,.0f}<br>%{customdata[2]:,.0f} linked theme records<extra></extra>'}
+      ],{barmode:'relative',xaxis:{range:[-100,100],tickvals:[-100,-50,0,50,100],ticktext:['100% negative','50%','0','50%','100% positive'],gridcolor:'#e5ebe8',zeroline:true,zerolinecolor:'#66766f',fixedrange:true},yaxis:{automargin:true,fixedrange:true},legend:{orientation:'h',y:1.08,x:0},margin:{t:48,b:38,l:15,r:18},hoverlabel:{align:'left',bgcolor:'#fff'}});
+    }
+
+    function heatmapChart(id,slugs,dimSlugs){
+      const selectedDims=dimensions.filter(dim=>dimSlugs.includes(dim.slug)); const z=selectedDims.map(dim=>slugs.map(slug=>scoreMap(slug)[dim.slug]?.score??null));
+      plot(id,[{type:'heatmap',z,x:slugs.map(brokerName),y:selectedDims.map(d=>d.name),zmin:30,zmax:100,colorscale:[[0,'#b85c4d'],[.45,'#f0cf78'],[1,'#0b8062']],text:z.map(row=>row.map(v=>v==null?'-':fmt(v,0))),texttemplate:'%{text}',hovertemplate:'%{y}<br>%{x}: %{z:.0f}/100<extra></extra>',colorbar:{title:'Score',thickness:10}}],{xaxis:{side:'bottom'},yaxis:{autorange:'reversed',automargin:true},margin:{t:20,b:55,l:20,r:20}});
+    }
+
+    function winnerMarkup(label,winner,lead,strengths,risk,comparisonText){
+      return `<section class="winner-band"><div><div class="label">${esc(label)}</div><h2>${esc(winner.broker_name)}</h2><p>${esc(comparisonText||`Leads the field by ${fmt(lead)} points using the published methodology.`)}</p></div><div class="winner-score"><strong>${fmt(winner.score)}</strong><small>fit score / confidence ${fmt(winner.confidence,0)}</small></div></section><section class="verdict-grid"><div class="verdict"><span>Why it leads</span><strong>${esc(strengths[0]?.name||'Balanced overall profile')}</strong></div><div class="verdict"><span>Also strong</span><strong>${esc(strengths[1]?.name||strengths[0]?.name||'Balanced overall profile')}</strong></div><div class="verdict risk"><span>Know before choosing</span><strong>${esc(risk?.name||'No material gap identified')}</strong></div></section>`;
+    }
+
+    function dashboardHeader(){
+      return `<div class="page-head"><div><div class="kicker">Independent brokerage intelligence</div><h1>Who leads, and why?</h1></div><div class="status"><span><b>${DATA.brokers.length}</b> brokers</span><span><b>${DATA.factSummary.fresh}</b> current facts</span><span>expired values hidden</span></div></div>`;
+    }
+
+    function renderDashboard(){
+      const rankings=weightedRankings(state.profile); const weights=profileWeights(state.profile); let body=dashboardHeader();
+      body+=`<div class="controls"><div class="segmented" role="group" aria-label="Audience"><button data-audience="Investor" class="${state.audience==='Investor'?'active':''}">Investor</button><button data-audience="Industry" class="${state.audience==='Industry'?'active':''}">Industry</button></div>`;
+      if(state.audience==='Investor') body+=`<div class="control"><label for="profile-select">Investor situation</label><select id="profile-select">${Object.keys(DATA.profilePresets).map(label=>`<option ${label===state.profile?'selected':''}>${esc(label)}</option>`).join('')}</select></div>`;
+      else body+=`<div class="control"><label for="industry-broker">Benchmark brokerage</label><select id="industry-broker">${DATA.brokers.map(b=>`<option value="${b.slug}" ${b.slug===state.industryBroker?'selected':''}>${esc(b.name)}</option>`).join('')}</select></div>`;
+      body+='</div>';
+      let radarSlugs,radarDims=topDimensions(weights,8);
+      if(state.audience==='Investor'){
+        const winner=rankings[0],edges=brokerEdges(winner.broker_slug,weights),lead=winner.score-rankings[1].score;
+        body+=winnerMarkup(`Best for ${state.profile} investors`,winner,lead,edges.strengths,edges.risk);
+        body+=`<div class="chart-grid section-title"><div class="panel"><div class="panel-title"><span>Top five</span><strong>Best overall fit for this situation</strong></div><div id="primary-left" class="chart"></div></div><div class="panel"><div class="panel-title"><span>Competitive shape</span><strong>How the top three differ</strong></div><div id="primary-right" class="chart"></div></div></div>`;
+        radarSlugs=rankings.slice(0,3).map(r=>r.broker_slug);
+      }else{
+        const selected=rankings.find(r=>r.broker_slug===state.industryBroker),nearest=nearestCompetitors(state.industryBroker),leader=rankings[0],edges=brokerEdges(state.industryBroker,weights);
+        body+=`<section class="winner-band"><div><div class="label">Competitive position</div><h2>${esc(selected.broker_name)} ranks #${selected.rank} of ${rankings.length}</h2><p>${esc(leader.broker_name)} leads the all-around market by ${fmt(leader.score-selected.score)} points. Closest profile: ${nearest.map(brokerName).join(', ')}.</p></div><div class="winner-score"><strong>${fmt(selected.score)}</strong><small>all-around fit / confidence ${fmt(selected.confidence,0)}</small></div></section><section class="verdict-grid"><div class="verdict"><span>Largest advantage</span><strong>${esc(edges.strengths[0]?.name||'No clear advantage')}</strong></div><div class="verdict"><span>Closest competitor</span><strong>${esc(brokerName(nearest[0]))}</strong></div><div class="verdict risk"><span>Largest competitive gap</span><strong>${esc(edges.risk?.name||'No gap identified')}</strong></div></section>`;
+        body+=`<div class="chart-grid section-title"><div class="panel"><div class="panel-title"><span>Gap to leader</span><strong>Where intervention matters most</strong></div><div id="primary-left" class="chart"></div></div><div class="panel"><div class="panel-title"><span>Competitive profile</span><strong>Selected brokerage versus closest peers</strong></div><div id="primary-right" class="chart"></div></div></div>`;
+        radarSlugs=[state.industryBroker,...nearest];
+      }
+      body+=`<div class="section-title"><span>Market leaders</span><strong>Three rankings that change brokerage decisions</strong></div><div class="leader-grid"><div class="panel"><div class="panel-title"><span>Customer voice</span><strong>Support, reliability, app experience and trend</strong></div><div id="customer-leaders" class="chart compact"></div></div><div class="panel"><div class="panel-title"><span>Economic value</span><strong>Fees, cash economics and banking integration</strong></div><div id="economic-leaders" class="chart compact"></div></div><div class="panel"><div class="panel-title"><span>Default cash rate</span><strong>Current automatic yield only</strong></div><div id="cash-leaders" class="chart compact"></div></div></div>`;
+      body+=`<div class="section-title"><span>Customer review landscape</span><strong>Platform ratings and directional customer sentiment</strong></div><div class="chart-grid"><div class="panel"><div class="panel-title"><span>Public platform ratings</span><strong>Apple, Google Play and Trustpilot on their five-point scales</strong></div><div id="review-heatmap" class="chart reviews"></div></div><div class="panel"><div class="panel-title"><span>Positive versus negative</span><strong>Directional share of recorded customer-theme mentions</strong></div><div id="sentiment-chart" class="chart reviews"></div></div></div><p class="caption">App-store ratings often reflect prompted reviews, while Trustpilot and theme mentions are self-selected. The comparison is context, not a representative customer census.</p>`;
+      app.innerHTML=body;
+      if(state.audience==='Investor') rankingChart('primary-left',rankings,5); else gapChart('primary-left',state.industryBroker);
+      radarChart('primary-right',radarSlugs,radarDims); compactChart('customer-leaders',DATA.customerRankings); compactChart('economic-leaders',DATA.economicRankings);
+      const cash=DATA.facts.filter(r=>r.fact_key==='default_sweep_apy_pct'&&r.value_numeric!=null).map(r=>({broker_slug:r.broker_slug,broker_name:r.broker_name,score:n(r.value_numeric)})).sort((a,b)=>b.score-a.score); compactChart('cash-leaders',cash,'%'); reviewHeatmap('review-heatmap'); sentimentChart('sentiment-chart');
+      document.querySelectorAll('[data-audience]').forEach(button=>button.addEventListener('click',()=>{state.audience=button.dataset.audience;render()}));
+      document.getElementById('profile-select')?.addEventListener('change',event=>{state.profile=event.target.value;render()});
+      document.getElementById('industry-broker')?.addEventListener('change',event=>{state.industryBroker=event.target.value;render()});
+    }
+
+    const fact = (slug,key) => DATA.facts.find(row=>row.broker_slug===slug&&row.fact_key===key);
+    const factCells = (keys,formatters={}) => DATA.brokers.map(b=>({broker:b,...Object.fromEntries(keys.map(key=>[key,fact(b.slug,key)])),formatters}));
+    function factValue(row,formatter){if(!row)return '<span class="missing">-</span>';const value=formatter?formatter(row):esc(row.value_text??row.value_numeric);const title=`Verified ${row.as_of_date}${row.title?` - ${row.title}`:''}`;return row.url?`<a class="source-link" href="${esc(row.url)}" target="_blank" rel="noreferrer" title="${esc(title)}">${value}</a>`:`<span title="${esc(title)}">${value}</span>`}
+    function factTable(title,subtitle,columns,keys,formatters={}){
+      const rows=factCells(keys,formatters); const heading=title||subtitle?`<div class="section-title"><span>${esc(title)}</span><strong>${esc(subtitle)}</strong></div>`:''; return `${heading}<div class="table-wrap"><table class="data-table"><thead><tr><th>Broker</th>${columns.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr><td>${esc(row.broker.name)}</td>${keys.map(key=>`<td>${factValue(row[key],formatters[key])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    }
+
+    function renderFees(){
+      const cash=DATA.facts.filter(r=>r.fact_key==='default_sweep_apy_pct'&&r.value_numeric!=null).sort((a,b)=>n(b.value_numeric)-n(a.value_numeric)); const bestCash=DATA.facts.filter(r=>r.fact_key==='best_cash_apy_pct'&&r.value_numeric!=null).sort((a,b)=>n(b.value_numeric)-n(a.value_numeric)); const options=DATA.facts.filter(r=>r.fact_key==='options_contract_fee_usd'&&r.value_numeric!=null).sort((a,b)=>n(a.value_numeric)-n(b.value_numeric)); const optionLeaders=options.length?options.filter(row=>n(row.value_numeric)===n(options[0].value_numeric)):[]; const freeTransfers=DATA.facts.filter(r=>r.fact_key==='outgoing_acat_fee_usd'&&n(r.value_numeric)===0);
+      const money=row=>`$${n(row.value_numeric).toFixed(n(row.value_numeric)%1?2:0)}`; const pct=row=>`${fmt(row.value_numeric,2)}%`;
+      app.innerHTML=`<div class="page-head"><div><div class="kicker">Current decision facts</div><h1>Fees &amp; Products</h1></div><div class="status"><span><b>${DATA.factSummary.fresh}</b> current facts</span><span>rates expire after 7 days</span></div></div><div class="kpi-grid"><div class="kpi primary"><span>Best automatic cash yield</span><strong>${esc(cash[0]?.broker_name||'Not enough current data')}</strong><small>${cash[0]?`${fmt(cash[0].value_numeric,2)}% - verified ${cash[0].as_of_date}`:'No current value'}</small></div><div class="kpi"><span>Best available cash yield</span><strong>${esc(bestCash[0]?.broker_name||'Not enough current data')}</strong><small>${bestCash[0]?`${fmt(bestCash[0].value_numeric,2)}% - conditions may apply`:'No current value'}</small></div><div class="kpi"><span>Lowest options commission</span><strong>${optionLeaders.length>1?`${optionLeaders.length} brokers tie`:esc(options[0]?.broker_name||'Not enough current data')}</strong><small>${options[0]?`${money(options[0])} per contract`:'No current value'}</small></div><div class="kpi"><span>No transfer-out fee</span><strong>${freeTransfers.length} brokers</strong><small>verified inside the 30-day fee SLA</small></div></div><div class="chart-grid"><div class="panel"><div class="panel-title"><span>Economic value</span><strong>Fees, cash and banking integration combined</strong></div><div id="fees-ranking" class="chart"></div></div><div class="panel"><div class="panel-title"><span>Cash and margin</span><strong>Blank means the verification window expired</strong></div>${factTable('','',['Automatic cash','Best available','Margin APR'],['default_sweep_apy_pct','best_cash_apy_pct','margin_rate_pct'],{default_sweep_apy_pct:pct,best_cash_apy_pct:pct,margin_rate_pct:pct})}</div></div>${factTable('Trading and account fees','Comparable current charges across all eleven brokers',['Stock / ETF','Options contract','Transfer out','Account fee'],['stock_etf_commission_usd','options_contract_fee_usd','outgoing_acat_fee_usd','account_fee_usd'],{stock_etf_commission_usd:money,options_contract_fee_usd:money,outgoing_acat_fee_usd:money,account_fee_usd:money})}${productTable()}<p class="caption">${DATA.factSummary.fresh} of ${DATA.factSummary.total} facts are currently inside their verification window. Rates expire after 7 days, margin after 14 days, fees after 30 days, and product features after 90 days.</p>`;
+      rankingChart('fees-ranking',DATA.economicRankings,11);
+    }
+
+    function productTable(){
+      const specs={fractional_shares_scope:['Fractional investing',{0:'No',1:'Limited',2:'Stocks + ETFs'}],banking_level:['Banking integration',{0:'None',1:'Basic',2:'Strong',3:'Full'}],crypto_trading:['Crypto',{0:'No',1:'Yes'}],futures_trading:['Futures',{0:'No',1:'Yes'}],international_trading:['International',{0:'No',1:'Yes'}],bonds_cds_available:['Bonds / CDs',{0:'No',1:'Yes'}],human_advisor_access:['Human advisor',{0:'No',1:'Yes'}]}; const keys=Object.keys(specs); const formatters=Object.fromEntries(keys.map(key=>[key,row=>esc(specs[key][1][n(row.value_numeric)]??'Unknown')])); return factTable('Product access','A quick market map of the capabilities investors ask for most',keys.map(key=>specs[key][0]),keys,formatters);
+    }
+
+    function compareOptions(index){
+      const selectedElsewhere=state.compare.filter((slug,i)=>i!==index&&slug); const optional=index===2?'<option value="">None</option>':''; return optional+DATA.brokers.map(b=>`<option value="${b.slug}" ${state.compare[index]===b.slug?'selected':''} ${selectedElsewhere.includes(b.slug)?'disabled':''}>${esc(b.name)}</option>`).join('');
+    }
+
+    function compareTable(slugs){
+      const rows=['Customer Voice','Support','Reliability','App','Trend','Coverage']; const keys=['score','support','reliability','app','trend','coverage']; return `<div class="section-title"><span>Customer voice</span><strong>Support and reliability carry the most weight</strong></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Metric</th>${slugs.map(s=>`<th>${esc(brokerName(s))}</th>`).join('')}</tr></thead><tbody>${rows.map((label,i)=>`<tr><td>${label}</td>${slugs.map(slug=>{const r=DATA.customerRankings.find(x=>x.broker_slug===slug);return `<td>${r?fmt(r[keys[i]],0):'-'}</td>`}).join('')}</tr>`).join('')}</tbody></table></div>`;
+    }
+
+    function comparisonFacts(slugs){
+      const specs={stock_etf_commission_usd:'Stock / ETF trade',options_contract_fee_usd:'Options contract',default_sweep_apy_pct:'Automatic cash rate',best_cash_apy_pct:'Best cash rate',margin_rate_pct:'Margin APR',outgoing_acat_fee_usd:'Transfer-out fee',fractional_shares_scope:'Fractional investing',banking_level:'Banking integration'}; return `<div class="section-title"><span>Current economics</span><strong>Expired rates and fees are omitted</strong></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Decision fact</th>${slugs.map(s=>`<th>${esc(brokerName(s))}</th>`).join('')}</tr></thead><tbody>${Object.entries(specs).map(([key,label])=>`<tr><td>${esc(label)}</td>${slugs.map(slug=>`<td>${factValue(fact(slug,key))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    }
+
+    function renderCompare(){
+      const slugs=state.compare.filter(Boolean); const rankings=weightedRankings(state.compareProfile),selected=rankings.filter(r=>slugs.includes(r.broker_slug)).sort((a,b)=>b.score-a.score),winner=selected[0],runner=selected[1],weights=profileWeights(state.compareProfile),edges=brokerEdges(winner.broker_slug,weights),dims=topDimensions(weights,8);
+      app.innerHTML=`<div class="page-head"><div><div class="kicker">Decision workspace</div><h1>Compare Brokers</h1></div></div><div class="compare-controls"><div class="control"><label for="compare-broker-1">Broker 1</label><select id="compare-broker-1" data-compare="0">${compareOptions(0)}</select></div><div class="control"><label for="compare-broker-2">Broker 2</label><select id="compare-broker-2" data-compare="1">${compareOptions(1)}</select></div><div class="control"><label for="compare-broker-3">Broker 3 (optional)</label><select id="compare-broker-3" data-compare="2">${compareOptions(2)}</select></div><div class="control"><label for="compare-profile">Investor situation</label><select id="compare-profile">${Object.keys(DATA.profilePresets).map(label=>`<option ${label===state.compareProfile?'selected':''}>${esc(label)}</option>`).join('')}</select></div></div>${winnerMarkup(`Best of these brokers for ${state.compareProfile}`,winner,winner.score-runner.score,edges.strengths,edges.risk,`Leads ${runner.broker_name} by ${fmt(winner.score-runner.score)} points.`)}<div class="chart-grid section-title"><div class="panel"><div class="panel-title"><span>Competitive shape</span><strong>Strengths and weaknesses at a glance</strong></div><div id="compare-radar" class="chart"></div></div><div class="panel"><div class="panel-title"><span>Exact scores</span><strong>Same dimensions, easier gap detection</strong></div><div id="compare-heatmap" class="chart"></div></div></div>${compareTable(slugs)}${comparisonFacts(slugs)}`;
+      radarChart('compare-radar',slugs,dims); heatmapChart('compare-heatmap',slugs,dims);
+      document.querySelectorAll('[data-compare]').forEach(select=>select.addEventListener('change',event=>{state.compare[n(event.target.dataset.compare)]=event.target.value;render()}));
+      document.getElementById('compare-profile').addEventListener('change',event=>{state.compareProfile=event.target.value;render()});
+    }
+
+    const moneyAmount = value => `$${Math.round(Math.abs(n(value))).toLocaleString()}`;
+    const signedMoney = value => `${n(value)<0?'-$':'$'}${Math.round(Math.abs(n(value))).toLocaleString()}`;
+    const netImpactLabel = value => n(value)<-.5?`${moneyAmount(value)} net benefit`:n(value)>.5?`${moneyAmount(value)} cost`:'$0 neutral';
+    const COST_PRESETS = {
+      'Buy & hold':{cash:25000,stockTrades:12,optionContracts:0,margin:0},
+      'Active trader':{cash:10000,stockTrades:200,optionContracts:250,margin:10000},
+      'Cash heavy':{cash:100000,stockTrades:12,optionContracts:0,margin:0}
+    };
+
+    function bofaTier(){
+      const assets=n(state.cost.relationshipAssets);
+      const tiers=[
+        {label:'Premier',minimum:fact('merrill','bofa_rewards_premier_balance_usd'),bonus:fact('merrill','bofa_rewards_premier_card_bonus_pct'),credit:fact('merrill','bofa_rewards_premier_subscription_credit_usd')},
+        {label:'Preferred Honors',minimum:fact('merrill','bofa_rewards_preferred_honors_balance_usd'),bonus:fact('merrill','bofa_rewards_preferred_honors_card_bonus_pct'),credit:fact('merrill','bofa_rewards_preferred_honors_subscription_credit_usd')},
+        {label:'Preferred Plus',minimum:fact('merrill','bofa_rewards_preferred_plus_balance_usd'),bonus:fact('merrill','bofa_rewards_preferred_plus_card_bonus_pct'),credit:null},
+        {label:'Member',minimum:{value_numeric:0},bonus:fact('merrill','bofa_rewards_member_card_bonus_pct'),credit:null}
+      ];
+      const available=tiers.filter(tier=>tier.minimum&&tier.bonus);
+      return available.find(tier=>assets>=n(tier.minimum.value_numeric))||null;
+    }
+
+    function relationshipBenefit(slug){
+      const empty={value:0,program:'None counted',detail:'No verified relationship benefit is included.',counted:false,cashRate:null,source:null};
+      if(!state.cost.includeBenefits)return empty;
+      if(slug==='merrill'){
+        const tier=bofaTier();if(!tier)return {...empty,detail:'BofA Rewards tier facts are unavailable.'};
+        const cardBonus=n(state.cost.annualCardSpend)*(n(state.cost.bofaBaseRewards)/100)*(n(tier.bonus.value_numeric)/100);
+        const subscription=state.cost.useSubscriptionCredits&&tier.credit?n(tier.credit.value_numeric):0;
+        return {value:cardBonus+subscription,program:'BofA Rewards',detail:`${tier.label}: ${fmt(tier.bonus.value_numeric,0)}% bonus on a ${fmt(state.cost.bofaBaseRewards,1)}% eligible-card base${subscription?` plus ${moneyAmount(subscription)} subscription credit`:''}.`,counted:true,cashRate:null,source:tier.bonus};
+      }
+      if(slug==='fidelity'){
+        const rate=fact(slug,'relationship_card_cashback_pct'),fee=fact(slug,'relationship_card_annual_cost_usd');if(!rate||!fee)return {...empty,detail:'Fidelity card facts are unavailable.'};
+        const incremental=n(state.cost.annualCardSpend)*Math.max(0,(n(rate.value_numeric)-n(state.cost.baselineRewards))/100)-n(fee.value_numeric);
+        return {value:incremental,program:'Fidelity Rewards Visa',detail:`${fmt(rate.value_numeric,1)}% cash back minus your ${fmt(state.cost.baselineRewards,1)}% current-card baseline.`,counted:true,cashRate:null,source:rate};
+      }
+      if(slug==='robinhood'){
+        const rate=fact(slug,'relationship_card_cashback_pct'),fee=fact(slug,'relationship_card_annual_cost_usd'),cashRate=fact(slug,'best_cash_apy_pct');if(!rate||!fee)return {...empty,detail:'Robinhood Gold Card facts are unavailable.'};
+        const incremental=n(state.cost.annualCardSpend)*Math.max(0,(n(rate.value_numeric)-n(state.cost.baselineRewards))/100)-n(fee.value_numeric);
+        return {value:incremental,program:'Robinhood Gold Card',detail:`${fmt(rate.value_numeric,1)}% cash back minus your ${fmt(state.cost.baselineRewards,1)}% baseline and the ${moneyAmount(fee.value_numeric)} Gold subscription.`,counted:true,cashRate,source:rate};
+      }
+      return empty;
+    }
+
+    function selectedCashFact(slug,benefit){
+      return benefit?.cashRate||fact(slug,'default_sweep_apy_pct');
+    }
+
+    function costRows(){
+      const benefits=Object.fromEntries(DATA.brokers.map(broker=>[broker.slug,relationshipBenefit(broker.slug)]));
+      const cashFacts=DATA.brokers.map(broker=>selectedCashFact(broker.slug,benefits[broker.slug])).filter(Boolean);
+      const benchmark=Math.max(...cashFacts.map(row=>n(row.value_numeric)),0);
+      const rows=DATA.brokers.map(broker=>{
+        const components={trading:0,cashMissed:0,margin:0,account:0,transfer:0};const missing=[];let required=0,covered=0;
+        const use=(key,needed,calculate)=>{if(!needed)return;required+=1;const row=fact(broker.slug,key);if(!row){missing.push(key);return}covered+=1;calculate(n(row.value_numeric),row)};
+        use('stock_etf_commission_usd',state.cost.stockTrades>0,value=>components.trading+=state.cost.stockTrades*value);
+        use('options_contract_fee_usd',state.cost.optionContracts>0,value=>components.trading+=state.cost.optionContracts*value);
+        if(state.cost.cash>0){required+=1;const cashRow=selectedCashFact(broker.slug,benefits[broker.slug]);if(!cashRow)missing.push('default_sweep_apy_pct');else{covered+=1;components.cashMissed=Math.max(0,(benchmark-n(cashRow.value_numeric))/100*state.cost.cash)}}
+        use('margin_rate_pct',state.cost.margin>0,value=>components.margin=value/100*state.cost.margin);
+        use('account_fee_usd',true,value=>components.account=value);
+        use('outgoing_acat_fee_usd',state.cost.includeTransfer,value=>components.transfer=value/Math.max(1,state.cost.horizon));
+        const coreCost=Object.values(components).reduce((sum,value)=>sum+value,0),benefit=benefits[broker.slug],netCost=coreCost-n(benefit.value);
+        return {broker_slug:broker.slug,broker_name:broker.name,coreCost,netCost,components,benefit,missing,coverage:required?covered/required:1,complete:missing.length===0,benchmark};
+      });
+      return rows.sort((a,b)=>Number(b.complete)-Number(a.complete)||(a.complete?a.netCost-b.netCost:b.coverage-a.coverage));
+    }
+
+    function costDriver(row){
+      const direct=row.components.trading+row.components.account+row.components.transfer;
+      const drivers=[['missed cash interest',row.components.cashMissed],['trading and account fees',direct],['margin interest',row.components.margin],['relationship benefits',Math.max(0,row.benefit.value)]];
+      return drivers.sort((a,b)=>b[1]-a[1])[0];
+    }
+
+    function costChart(id,rows){
+      const view=rows.filter(row=>row.complete).sort((a,b)=>b.netCost-a.netCost);
+      const custom=view.map(row=>[row.coreCost,row.benefit.value,row.components.cashMissed,row.components.trading,row.components.margin,row.components.account+row.components.transfer]);
+      plot(id,[{type:'bar',orientation:'h',x:view.map(row=>row.netCost),y:view.map(row=>row.broker_name),marker:{color:view.map(row=>row.netCost<=0?'#08785e':'#c8674b')},text:view.map(row=>netImpactLabel(row.netCost)),textposition:'outside',cliponaxis:false,customdata:custom,hovertemplate:'<b>%{y}</b><br>Annual net impact: $%{x:,.0f}<br>Core measurable cost: $%{customdata[0]:,.0f}<br>Relationship benefit: $%{customdata[1]:,.0f}<br><br>Missed cash interest: $%{customdata[2]:,.0f}<br>Trading: $%{customdata[3]:,.0f}<br>Margin: $%{customdata[4]:,.0f}<br>Account + transfer: $%{customdata[5]:,.0f}<extra></extra>'}],{xaxis:{title:'Annual net impact: left is better',gridcolor:'#e6ece8',zeroline:true,zerolinecolor:'#71867d',zerolinewidth:2},yaxis:{automargin:true},showlegend:false,margin:{t:18,b:48,l:16,r:95}});
+    }
+
+    function benefitCards(rows){
+      const byBroker=Object.fromEntries(rows.map(row=>[row.broker_slug,row])),tier=bofaTier();
+      const schwabFacts=[fact('schwab','schwab_platinum_appreciation_250k_usd'),fact('schwab','schwab_platinum_appreciation_1m_usd'),fact('schwab','schwab_platinum_appreciation_10m_usd')].filter(Boolean);
+      const schwabBonus=n(state.cost.relationshipAssets)>=10000000?n(schwabFacts[2]?.value_numeric):n(state.cost.relationshipAssets)>=1000000?n(schwabFacts[1]?.value_numeric):n(state.cost.relationshipAssets)>=250000?n(schwabFacts[0]?.value_numeric):0;
+      const link=row=>row?.url?`<a href="${esc(row.url)}" target="_blank" rel="noreferrer">Official terms - verified ${esc(row.as_of_date)}</a>`:'';
+      const card=(slug,label,body,source,counted=false)=>`<article class="benefit-card ${counted?'counted':''}"><span>${esc(label)}</span><strong>${esc(brokerName(slug))}</strong><p>${esc(body)}</p>${link(source)}</article>`;
+      const merrill=byBroker.merrill?.benefit,fidelity=byBroker.fidelity?.benefit,robinhood=byBroker.robinhood?.benefit;
+      return card('merrill',state.cost.includeBenefits?'Counted in result':'Available, currently off',tier?`${tier.label}: ${fmt(tier.bonus.value_numeric,0)}% eligible-card rewards bonus${state.cost.useSubscriptionCredits&&tier.credit?` and up to ${moneyAmount(tier.credit.value_numeric)} subscription credit`:''}.`:'Tier facts unavailable.',tier?.bonus,!!merrill?.counted)+card('fidelity',state.cost.includeBenefits?'Counted in result':'Available, currently off',`2% card rewards are counted only above your ${fmt(state.cost.baselineRewards,1)}% current-card baseline.`,fact('fidelity','relationship_card_cashback_pct'),!!fidelity?.counted)+card('robinhood',state.cost.includeBenefits?'Counted in result':'Available, currently off',`3% card rewards and the Gold cash rate are modeled after the $50 required annual subscription.`,fact('robinhood','relationship_card_cashback_pct'),!!robinhood?.counted)+card('schwab','Tracked, not auto-counted',`${schwabBonus?`${moneyAmount(schwabBonus)} appreciation credit at the entered assets.`:'Appreciation credits begin at $250,000.'} The premium card fee and broader benefits need a separate card decision.`,schwabFacts.find(Boolean),false);
+    }
+
+    function readCostForm(includeBenefits){
+      const value=(id,fallback)=>document.getElementById(id)?.value??fallback;
+      return {...state.cost,preset:'Custom',cash:n(value('cost-cash',state.cost.cash)),stockTrades:n(value('cost-trades',state.cost.stockTrades)),optionContracts:n(value('cost-options',state.cost.optionContracts)),margin:n(value('cost-margin',state.cost.margin)),horizon:Math.max(1,n(value('cost-horizon',state.cost.horizon))),includeTransfer:value('cost-transfer',state.cost.includeTransfer?'yes':'no')==='yes',includeBenefits,annualCardSpend:n(value('cost-card-spend',state.cost.annualCardSpend)),baselineRewards:n(value('cost-card-baseline',state.cost.baselineRewards)),relationshipAssets:n(value('cost-assets',state.cost.relationshipAssets)),bofaBaseRewards:n(value('cost-bofa-base',state.cost.bofaBaseRewards)),useSubscriptionCredits:document.getElementById('cost-subscriptions')?.checked??state.cost.useSubscriptionCredits};
+    }
+
+    function renderCost(){
+      const rows=costRows(),complete=rows.filter(row=>row.complete),best=complete[0],runnerUp=complete[1],benchmark=rows[0]?.benchmark||0,driver=best?costDriver(best):null;
+      const missingLabels={default_sweep_apy_pct:'automatic cash rate',margin_rate_pct:'margin APR',stock_etf_commission_usd:'stock commission',options_contract_fee_usd:'options fee',account_fee_usd:'account fee',outgoing_acat_fee_usd:'transfer fee'};
+      const benefitsInputs=state.cost.includeBenefits?`<div class="benefit-inputs"><div class="cost-control"><label for="cost-card-spend">Eligible card spending / year</label><input id="cost-card-spend" type="number" min="0" step="1000" value="${state.cost.annualCardSpend}"><small>Spending you would move to each broker-linked card.</small></div><div class="cost-control"><label for="cost-card-baseline">Your current card rewards</label><input id="cost-card-baseline" type="number" min="0" max="10" step="0.1" value="${state.cost.baselineRewards}"><small>Used to count only incremental Fidelity and Robinhood value.</small></div><div class="cost-control"><label for="cost-assets">Assets you could consolidate</label><input id="cost-assets" type="number" min="0" step="10000" value="${state.cost.relationshipAssets}"><small>Determines BofA Rewards and displayed Schwab tiers.</small></div><div class="cost-control"><label for="cost-bofa-base">Eligible BofA card base rate</label><input id="cost-bofa-base" type="number" min="0" max="10" step="0.1" value="${state.cost.bofaBaseRewards}"><small>BofA tier bonus applies to this base earn rate.</small></div><label class="check-row"><input id="cost-subscriptions" type="checkbox" ${state.cost.useSubscriptionCredits?'checked':''}><span>Count BofA subscription credits I expect to use</span></label></div>`:'';
+      const resultSentence=best?`With ${moneyAmount(state.cost.cash)} in idle cash, ${state.cost.stockTrades} stock/ETF trades and ${state.cost.optionContracts} options contracts per year, ${best.broker_name} has the strongest complete measurable result. ${driver&&driver[1]>0?`Its largest modeled driver is ${driver[0]} (${moneyAmount(driver[1])}).`:'No material annual cost is currently measured for this profile.'}`:'No broker has complete current data for this profile.';
+      app.innerHTML=`<div class="page-head"><div><div class="kicker">Personalized economics</div><h1>What would each broker cost you?</h1></div><div class="status"><span>current facts only</span><span>benefits are optional</span></div></div><div class="cost-intro"><div class="cost-step"><b>1</b><div><strong>Describe how you use a broker</strong><small>Cash, trading and margin determine which prices matter.</small></div></div><div class="cost-step"><b>2</b><div><strong>We apply current verified terms</strong><small>Missing rates stay missing; the lab never guesses.</small></div></div><div class="cost-step"><b>3</b><div><strong>See the annual net impact</strong><small>Core costs minus only the relationship benefits you choose to model.</small></div></div></div><section class="cost-form-shell"><div class="cost-form-head"><strong>Start with a profile or adjust the numbers</strong><div class="cost-presets">${Object.keys(COST_PRESETS).map(label=>`<button type="button" data-cost-preset="${esc(label)}" class="${state.cost.preset===label?'active':''}">${esc(label)}</button>`).join('')}<button type="button" class="${state.cost.preset==='Custom'?'active':''}" disabled>Custom</button></div></div><form id="cost-form" class="cost-controls"><div class="cost-control"><label for="cost-cash">Cash left uninvested</label><input id="cost-cash" type="number" min="0" step="1000" value="${state.cost.cash}"><small>Used to estimate interest missed versus the best current automatic rate.</small></div><div class="cost-control"><label for="cost-trades">Stock / ETF trades / year</label><input id="cost-trades" type="number" min="0" step="1" value="${state.cost.stockTrades}"><small>Most tracked brokers currently charge $0.</small></div><div class="cost-control"><label for="cost-options">Options contracts / year</label><input id="cost-options" type="number" min="0" step="1" value="${state.cost.optionContracts}"><small>Enter contracts, not the number of orders.</small></div><div class="cost-control"><label for="cost-margin">Average margin borrowed</label><input id="cost-margin" type="number" min="0" step="1000" value="${state.cost.margin}"><small>Converted into estimated annual interest.</small></div><details class="cost-advanced"><summary>Transfer assumptions</summary><div class="cost-advanced-grid"><div class="cost-control"><label for="cost-horizon">Expected years with broker</label><input id="cost-horizon" type="number" min="1" max="30" step="1" value="${state.cost.horizon}"><small>Spreads a one-time transfer fee across your holding period.</small></div><div class="cost-control"><label for="cost-transfer">Include eventual transfer-out fee</label><select id="cost-transfer"><option value="yes" ${state.cost.includeTransfer?'selected':''}>Yes, annualized</option><option value="no" ${!state.cost.includeTransfer?'selected':''}>No</option></select></div></div></details><label class="benefit-toggle"><input id="cost-benefits" type="checkbox" ${state.cost.includeBenefits?'checked':''}><span><strong>Include relationship and card benefits</strong><small>Add verified incremental value from BofA Rewards, Fidelity Rewards Visa and Robinhood Gold. Credit approval and program eligibility still apply.</small></span></label>${benefitsInputs}<div class="cost-submit"><button class="action-button" type="submit">Update comparison</button><span>Changing assumptions does not change the underlying broker scores.</span></div></form></section><div class="cost-formula"><strong>Annual net impact</strong> = missed cash interest + trading and account fees + margin interest - verified relationship benefits. Cash is compared with the best selected automatic rate (${fmt(benchmark,2)}%).</div><section class="result-callout"><div><div class="kicker">Your result</div><h2>${esc(best?.broker_name||'Insufficient current data')}</h2><p>${esc(resultSentence)}</p></div><div class="result-number"><strong class="${best&&best.netCost<=0?'net-benefit':'net-cost'}">${best?esc(netImpactLabel(best.netCost)):'-'}</strong><small>estimated each year</small></div></section><div class="kpi-grid"><div class="kpi primary"><span>Best complete result</span><strong>${esc(best?.broker_name||'-')}</strong><small>${best?esc(netImpactLabel(best.netCost)):'No complete comparison'}</small></div><div class="kpi"><span>Advantage over next best</span><strong>${best&&runnerUp?moneyAmount(runnerUp.netCost-best.netCost):'-'}</strong><small>under the assumptions above</small></div><div class="kpi"><span>Relationship benefits</span><strong>${state.cost.includeBenefits?'Included':'Off'}</strong><small>${state.cost.includeBenefits?'incremental verified value only':'core brokerage economics only'}</small></div><div class="kpi"><span>Complete comparisons</span><strong>${complete.length} of ${rows.length}</strong><small>required current facts present</small></div></div><div class="cost-grid"><div class="panel"><div class="panel-title"><span>Annual net impact</span><strong>Left is better; green means benefits exceed measured costs</strong></div><div id="cost-chart" class="chart"></div></div><div class="panel"><div class="panel-title"><span>See the math</span><strong>Every component remains separate</strong></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Broker</th><th>Net result</th><th>Missed interest</th><th>Direct fees</th><th>Margin</th><th>Relationship value</th><th>Data</th></tr></thead><tbody>${rows.map(row=>`<tr><td>${esc(row.broker_name)}</td><td class="${row.complete?(row.netCost<=0?'net-benefit':'net-cost'):'missing'}">${row.complete?esc(netImpactLabel(row.netCost)):'Not ranked'}</td><td>${moneyAmount(row.components.cashMissed)}</td><td>${moneyAmount(row.components.trading+row.components.account+row.components.transfer)}</td><td>${moneyAmount(row.components.margin)}</td><td>${state.cost.includeBenefits&&row.benefit.counted?`${signedMoney(row.benefit.value)}<div class="evidence-meta">${esc(row.benefit.program)}</div>`:'-'}</td><td>${row.complete?'<span class="status-chip high">Complete</span>':`<span class="status-chip unavailable" title="Missing ${esc(row.missing.map(key=>missingLabels[key]||key).join(', '))}">${fmt(row.coverage*100,0)}%</span>`}</td></tr>`).join('')}</tbody></table></div></div></div><div class="section-title"><span>Relationship benefits</span><strong>What is counted, what is merely tracked, and why</strong></div><div class="benefit-grid">${benefitCards(rows)}</div><p class="caption">Welcome bonuses, loan discounts, ATM reimbursements, lounge access, tax effects and benefits without a comparable personal dollar value remain outside the ranking. This prevents a long feature list from masquerading as guaranteed savings. Verify card and program eligibility before acting.</p>`;
+      costChart('cost-chart',rows);
+      document.querySelectorAll('[data-cost-preset]').forEach(button=>button.addEventListener('click',()=>{state.cost={...state.cost,...COST_PRESETS[button.dataset.costPreset],preset:button.dataset.costPreset};renderCost()}));
+      document.getElementById('cost-benefits').addEventListener('change',event=>{state.cost=readCostForm(event.target.checked);renderCost()});
+      document.getElementById('cost-form').addEventListener('submit',event=>{event.preventDefault();state.cost=readCostForm(document.getElementById('cost-benefits').checked);renderCost()});
+    }
+
+    const researchTabs=['Evidence','Withdrawn','Sources','Changes','Methodology','Execution'];
+    const researchNav=()=>`<div class="research-nav">${researchTabs.map(tab=>`<button data-research-tab="${tab}" class="${state.researchTab===tab?'active':''}">${tab}</button>`).join('')}</div>`;
+    const statusChip=(label,kind=label)=>`<span class="status-chip ${esc(String(kind).toLowerCase())}">${esc(label)}</span>`;
+    const optionsFor=(values,current,emptyLabel='All')=>`<option value="">${emptyLabel}</option>${[...new Set(values.filter(Boolean))].sort().map(value=>`<option value="${esc(value)}" ${value===current?'selected':''}>${esc(value)}</option>`).join('')}`;
+
+    function evidenceView(){
+      const f=state.evidenceFilters,needle=f.search.toLowerCase(); let view=DATA.evidence.filter(row=>(!f.broker||row.broker_name===f.broker)&&(!f.sourceType||row.source_type===f.sourceType)&&(!f.method||row.collection_method===f.method)&&(!f.confidence||row.confidence===f.confidence)&&(!f.status||(f.status==='available'?!row.unavailable:!!row.unavailable))&&(!needle||[row.title,row.snippet,row.url,row.source_name,row.broker_name].some(value=>String(value||'').toLowerCase().includes(needle))));
+      const pageSize=20,pages=Math.max(1,Math.ceil(view.length/pageSize));state.evidencePage=Math.min(state.evidencePage,pages);const pageRows=view.slice((state.evidencePage-1)*pageSize,state.evidencePage*pageSize);
+      return `<form id="evidence-filter" class="filter-grid"><input id="evidence-search" aria-label="Search evidence" placeholder="Search title, snippet, URL or source" value="${esc(f.search)}"><select id="evidence-broker" aria-label="Broker">${optionsFor(DATA.evidence.map(row=>row.broker_name),f.broker,'All brokers')}</select><select id="evidence-type" aria-label="Source type">${optionsFor(DATA.evidence.map(row=>row.source_type),f.sourceType,'All source types')}</select><select id="evidence-method" aria-label="Collection method">${optionsFor(DATA.evidence.map(row=>row.collection_method),f.method,'All methods')}</select><select id="evidence-confidence" aria-label="Confidence">${optionsFor(['high','medium','low'],f.confidence,'All confidence')}</select><select id="evidence-status" aria-label="Availability"><option value="">All availability</option><option value="available" ${f.status==='available'?'selected':''}>Available</option><option value="unavailable" ${f.status==='unavailable'?'selected':''}>Unavailable</option></select><div class="filter-actions"><button class="action-button" type="submit">Apply</button><button class="action-button secondary" id="clear-evidence" type="button">Clear</button></div></form><div class="audit-kpis"><div class="audit-kpi"><span>Rows shown</span><strong>${view.length}</strong></div><div class="audit-kpi"><span>Distinct sources</span><strong>${new Set(view.map(row=>row.source_slug)).size}</strong></div><div class="audit-kpi"><span>Official API rows</span><strong>${view.filter(row=>row.collection_method==='api').length}</strong></div><div class="audit-kpi"><span>Unavailable</span><strong>${view.filter(row=>row.unavailable).length}</strong></div></div><div class="pagination"><button id="evidence-prev" ${state.evidencePage<=1?'disabled':''}>Previous</button><span>Page ${state.evidencePage} of ${pages}</span><button id="evidence-next" ${state.evidencePage>=pages?'disabled':''}>Next</button></div><div class="evidence-list">${pageRows.map(row=>`<article class="evidence-row"><div class="evidence-top"><div><div class="evidence-title">${row.url?`<a href="${esc(row.url)}" target="_blank" rel="noreferrer">${esc(row.title||row.url)}</a>`:esc(row.title||'Untitled evidence')}</div><div class="evidence-meta">#${row.id} - ${esc(row.source_name)}${row.broker_name?` - ${esc(row.broker_name)}`:''} - retrieved ${esc(row.retrieval_date)} - ${esc(row.collection_method)}</div></div>${row.unavailable?statusChip('Unavailable','unavailable'):statusChip(row.confidence,row.confidence)}</div><details><summary>Inspect evidence</summary><div class="evidence-detail">${row.published_date?`<div><strong>Published:</strong> ${esc(row.published_date)}</div>`:''}${row.snippet?`<blockquote>${esc(row.snippet)}</blockquote>`:'<div>No excerpt recorded.</div>'}${row.notes?`<div><strong>Caveat:</strong> ${esc(row.notes)}</div>`:''}${row.raw_path?`<div><strong>Archived payload:</strong> ${esc(row.raw_path)}</div>`:''}</div></details></article>`).join('')||'<div class="evidence-row">No evidence matches these filters.</div>'}</div><div class="pagination"><button id="evidence-prev-bottom" ${state.evidencePage<=1?'disabled':''}>Previous</button><span>Page ${state.evidencePage} of ${pages}</span><button id="evidence-next-bottom" ${state.evidencePage>=pages?'disabled':''}>Next</button></div>`;
+    }
+
+    function withdrawalStatus(notes){const match=String(notes||'').match(/WITHDRAWN\|([^|]+)\|([^|]+)\|/);if(!match)return {reason:'Unknown',date:'?'};return {reason:match[1]==='dead_url'?'URL dead':match[1]==='dropped_coverage'?'Broker de-listed':match[1],date:match[2]}}
+
+    function withdrawnView(){
+      const rows=DATA.withdrawnReviews.map(row=>({...row,status:withdrawalStatus(row.notes)}));const publishers=[...new Set(rows.map(row=>row.source_name))];
+      return `<div class="audit-kpis"><div class="audit-kpi"><span>Withdrawn claims</span><strong>${rows.length}</strong></div><div class="audit-kpi"><span>Publishers involved</span><strong>${publishers.length}</strong></div><div class="audit-kpi"><span>Brokers affected</span><strong>${new Set(rows.map(row=>row.broker_slug)).size}</strong></div><div class="audit-kpi"><span>Excluded from scores</span><strong>${rows.length}</strong></div></div><div class="section-title"><span>Historical record</span><strong>Every expert claim whose cited page no longer supports it</strong></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Publisher</th><th>Broker</th><th>Claim</th><th>Last recorded</th><th>Detected</th><th>Status</th></tr></thead><tbody>${rows.map(row=>`<tr><td>${esc(row.source_name)}</td><td>${esc(row.broker_name)}</td><td><a href="${esc(row.url)}" target="_blank" rel="noreferrer">${fmt(row.rating_raw,1)}/${fmt(row.rating_scale_max,0)} - ${esc(row.dim_name)}</a></td><td>${esc(row.retrieval_date)}</td><td>${esc(row.status.date)}</td><td>${statusChip(row.status.reason,'unavailable')}</td></tr>`).join('')}</tbody></table></div><p class="caption">A dead URL or a page that no longer mentions the broker is excluded from scoring and contradiction detection immediately. The original claim is retained here for accountability.</p>`;
+    }
+
+    function sourcesView(){
+      return `<div class="audit-kpis"><div class="audit-kpi"><span>Registered sources</span><strong>${DATA.sources.length}</strong></div><div class="audit-kpi"><span>Contributing evidence</span><strong>${DATA.sources.filter(row=>n(row.evidence_count)>0).length}</strong></div><div class="audit-kpi"><span>Available records</span><strong>${DATA.sources.reduce((sum,row)=>sum+n(row.available_count),0)}</strong></div><div class="audit-kpi"><span>Source types</span><strong>${new Set(DATA.sources.map(row=>row.source_type)).size}</strong></div></div><div class="section-title"><span>Incentive map</span><strong>Quality weight, evidence coverage and the economic context behind each source</strong></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Source</th><th>Type</th><th>Quality weight</th><th>Evidence</th><th>Unavailable</th><th>Latest check</th><th>Incentive and bias context</th></tr></thead><tbody>${DATA.sources.map(row=>`<tr><td><a href="${esc(row.base_url)}" target="_blank" rel="noreferrer">${esc(row.name)}</a><div class="evidence-meta">${esc(row.publisher||'')}</div></td><td>${esc(row.source_type)}</td><td>${fmt(row.quality_weight,2)}</td><td>${n(row.evidence_count)}</td><td>${n(row.unavailable_count)}</td><td>${esc(row.latest_retrieval||'Not collected')}</td><td>${esc(row.incentive)}<div class="evidence-meta">${esc(row.notes||'')}</div></td></tr>`).join('')}</tbody></table></div>`;
+    }
+
+    function changesView(){
+      return `${DATA.factChanges.length?`<div class="section-title"><span>Detected value changes</span><strong>Machine-recorded before and after values</strong></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Detected</th><th>Broker</th><th>Fact</th><th>Previous</th><th>New</th><th>Source date</th></tr></thead><tbody>${DATA.factChanges.map(row=>`<tr><td>${esc(row.detected_at)}</td><td>${esc(row.broker_name)}</td><td><a href="${esc(row.url)}" target="_blank" rel="noreferrer">${esc(row.fact_key)}</a></td><td>${esc(row.old_value_text??row.old_value_numeric??'-')}</td><td>${esc(row.new_value_text??row.new_value_numeric??'-')}</td><td>${esc(row.source_as_of_date)}</td></tr>`).join('')}</tbody></table></div>`:`<div class="coverage-gap"><strong>No structured value changes recorded yet</strong><p>The adapter has not observed a before-and-after value change in the current database. Verification activity is still recorded below; an empty change ledger is not presented as proof that terms never changed.</p></div>`}<div class="section-title"><span>Verification activity</span><strong>Every current, stale, unchanged or updated structured-fact check</strong></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Checked</th><th>Broker</th><th>Fact</th><th>Status</th><th>Source date</th><th>Detail</th></tr></thead><tbody>${DATA.verificationRuns.map(row=>`<tr><td>${esc(row.checked_at)}</td><td>${esc(row.broker_name)}</td><td><a href="${esc(row.source_url)}" target="_blank" rel="noreferrer">${esc(row.fact_key)}</a></td><td>${statusChip(row.status,row.status)}</td><td>${esc(row.source_as_of_date||'-')}</td><td>${esc(row.detail||'')}</td></tr>`).join('')}</tbody></table></div><div class="section-title"><span>Pipeline history</span><strong>Collection and scoring run status</strong></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Step</th><th>Status</th><th>Finished</th><th>Detail</th></tr></thead><tbody>${DATA.pipelineRuns.map(row=>`<tr><td>${esc(row.step)}</td><td>${statusChip(row.status,row.status)}</td><td>${esc(row.finished_at||'-')}</td><td>${esc(row.detail||'')}</td></tr>`).join('')}</tbody></table></div>`;
+    }
+
+    function inlineMarkdown(value){
+      let safe=esc(value);safe=safe.replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+      return safe.replace(/\[([^\]]+)\]\(([^)]+)\)/g,(match,label,url)=>/^https?:\/\//.test(url)?`<a href="${url}" target="_blank" rel="noreferrer">${label}</a>`:`<span>${label}</span>`);
+    }
+
+    function markdownToHtml(markdown){
+      const lines=String(markdown||'').replace(/\r/g,'').split('\n');const output=[];let list=null,code=false,codeLines=[];
+      const closeList=()=>{if(list){output.push(`</${list}>`);list=null}};
+      for(let i=0;i<lines.length;i+=1){const line=lines[i];
+        if(line.startsWith('```')){closeList();if(code){output.push(`<pre><code>${esc(codeLines.join('\n'))}</code></pre>`);codeLines=[];code=false}else code=true;continue}if(code){codeLines.push(line);continue}
+        if(line.includes('|')&&i+1<lines.length&&/^\s*\|?[\s:|-]+\|/.test(lines[i+1])){closeList();const headers=line.split('|').map(v=>v.trim()).filter(Boolean);i+=2;const rows=[];while(i<lines.length&&lines[i].includes('|')&&lines[i].trim()){rows.push(lines[i].split('|').map(v=>v.trim()).filter(Boolean));i+=1}i-=1;output.push(`<div class="table-wrap"><table><thead><tr>${headers.map(v=>`<th>${inlineMarkdown(v)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(v=>`<td>${inlineMarkdown(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`);continue}
+        const heading=line.match(/^(#{1,3})\s+(.*)$/);if(heading){closeList();output.push(`<h${heading[1].length}>${inlineMarkdown(heading[2])}</h${heading[1].length}>`);continue}
+        const bullet=line.match(/^[-*]\s+(.*)$/);if(bullet){if(list!=='ul'){closeList();list='ul';output.push('<ul>')}output.push(`<li>${inlineMarkdown(bullet[1])}</li>`);continue}
+        const numbered=line.match(/^\d+\.\s+(.*)$/);if(numbered){if(list!=='ol'){closeList();list='ol';output.push('<ol>')}output.push(`<li>${inlineMarkdown(numbered[1])}</li>`);continue}
+        closeList();if(!line.trim())continue;if(line.trim()==='---'){output.push('<hr>');continue}if(line.startsWith('> ')){output.push(`<blockquote>${inlineMarkdown(line.slice(2))}</blockquote>`);continue}output.push(`<p>${inlineMarkdown(line)}</p>`);
+      }closeList();return output.join('');
+    }
+
+    function methodologyView(){
+      const docs={methodology:'Methodology',scoring:'Scoring logic',sources:'Data sources',limitations:'Limitations'};
+      return `<div class="segmented" aria-label="Research document">${Object.entries(docs).map(([key,label])=>`<button data-document-tab="${key}" class="${state.documentTab===key?'active':''}">${label}</button>`).join('')}</div><article class="document">${markdownToHtml(DATA.documents[state.documentTab])}</article>`;
+    }
+
+    function executionView(){
+      return `<div class="coverage-gap"><strong>Execution quality is not yet scored</strong><p>${esc(DATA.executionQuality.detail)}</p></div><div class="section-title"><span>Evidence contract</span><strong>What must be collected before any broker receives an execution score</strong></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Disclosure</th><th>Cadence</th><th>Metrics to normalize</th><th>Status</th></tr></thead><tbody><tr><td><a href="https://www.sec.gov/rules-regulations/staff-guidance/trading-markets-frequently-asked-questions/frequently-asked-questions-rule-605-regulation-nms" target="_blank" rel="noreferrer">SEC Rule 605</a></td><td>Monthly</td><td>Effective spread, price improvement, execution speed, fill and size improvement by order class</td><td>${statusChip('Not collected','unavailable')}</td></tr><tr><td><a href="https://www.sec.gov/rules-regulations/staff-guidance/trading-markets-frequently-asked-questions/faq-rule-606-regulation" target="_blank" rel="noreferrer">SEC Rule 606</a></td><td>Quarterly</td><td>Routing concentration, payment for order flow, venue economics and routing conflicts</td><td>${statusChip('Not collected','unavailable')}</td></tr></tbody></table></div><div class="section-title"><span>Release standard</span><strong>No score until the comparison is genuinely like-for-like</strong></div><div class="document"><p>Reports must be archived in the evidence ledger, tied to a broker and reporting period, parsed into a common order-size and order-type taxonomy, and validated against the published summary. Missing reports remain coverage gaps. The eventual score must show both the raw execution measures and the assumptions used to aggregate them.</p></div>`;
+    }
+
+    function renderResearch(){
+      const views={Evidence:evidenceView,Withdrawn:withdrawnView,Sources:sourcesView,Changes:changesView,Methodology:methodologyView,Execution:executionView};
+      app.innerHTML=`<div class="page-head"><div><div class="kicker">Research and accountability</div><h1>Audit the Index</h1></div><div class="status"><span><b>${DATA.evidence.length}</b> evidence records</span><span><b>${DATA.withdrawnReviews.length}</b> withdrawn claims</span><span><b>${DATA.sources.length}</b> sources</span></div></div>${researchNav()}${views[state.researchTab]()}`;
+      document.querySelectorAll('[data-research-tab]').forEach(button=>button.addEventListener('click',()=>{state.researchTab=button.dataset.researchTab;renderResearch()}));
+      document.querySelectorAll('[data-document-tab]').forEach(button=>button.addEventListener('click',()=>{state.documentTab=button.dataset.documentTab;renderResearch()}));
+      const form=document.getElementById('evidence-filter');if(form){form.addEventListener('submit',event=>{event.preventDefault();state.evidenceFilters={search:document.getElementById('evidence-search').value,broker:document.getElementById('evidence-broker').value,sourceType:document.getElementById('evidence-type').value,method:document.getElementById('evidence-method').value,confidence:document.getElementById('evidence-confidence').value,status:document.getElementById('evidence-status').value};state.evidencePage=1;renderResearch()});document.getElementById('clear-evidence').addEventListener('click',()=>{state.evidenceFilters={search:'',broker:'',sourceType:'',method:'',confidence:'',status:''};state.evidencePage=1;renderResearch()});const changePage=delta=>{state.evidencePage+=delta;renderResearch()};document.getElementById('evidence-prev')?.addEventListener('click',()=>changePage(-1));document.getElementById('evidence-prev-bottom')?.addEventListener('click',()=>changePage(-1));document.getElementById('evidence-next')?.addEventListener('click',()=>changePage(1));document.getElementById('evidence-next-bottom')?.addEventListener('click',()=>changePage(1))}
+    }
+
+    function render(){
+      document.querySelectorAll('[data-page]').forEach(button=>button.classList.toggle('active',button.dataset.page===state.page));
+      if(state.page==='dashboard')renderDashboard();else if(state.page==='fees')renderFees();else if(state.page==='compare')renderCompare();else if(state.page==='cost')renderCost();else renderResearch();
+      window.scrollTo({top:0,behavior:'instant'});
+    }
+    document.querySelectorAll('[data-page]').forEach(button=>button.addEventListener('click',()=>{state.page=button.dataset.page;render()}));
+    document.getElementById('generated-date').textContent=`Offline snapshot generated ${DATA.generatedOn}`;
+    render();
+  </script>
+</body>
+</html>

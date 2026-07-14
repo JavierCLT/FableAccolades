@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Generated artifacts (rebuild with `python -m backend.pipeline`)
+data/processed/*.db
+data/raw/**
+!data/raw/.gitkeep
+data/evidence/**
+!data/evidence/.gitkeep
+
+logs/
+.streamlit/secrets.toml

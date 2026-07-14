@@ -1,0 +1,22 @@
+[client]
+showSidebarNavigation = false
+toolbarMode = "minimal"
+
+[theme]
+base = "light"
+primaryColor = "#08785E"
+backgroundColor = "#F4F7F5"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#18211E"
+linkColor = "#1556A0"
+borderColor = "#D8E1DC"
+showWidgetBorder = true
+baseRadius = "small"
+buttonRadius = "small"
+font = "sans-serif"
+headingFont = "sans-serif"
+codeFont = "monospace"
+showSidebarBorder = false
+
+[server]
+headless = true
